@@ -53,11 +53,19 @@
       rotation: $ghostState.rotation
     });
 
+    // Calculate the offset to center the ghost around the cursor
+    const offsetX = Math.floor(effectiveDimensions.width / 2);
+    const offsetY = Math.floor(effectiveDimensions.height / 2);
+
+    // Apply the offset to center the ghost
+    const centeredX = x - offsetX;
+    const centeredY = y - offsetY;
+
     // Clamp x and y to ensure the ghost doesn't go off the right or bottom edge
     const maxX = $gridState[0].length - effectiveDimensions.width;
     const maxY = $gridState.length - effectiveDimensions.height;
-    const clampedX = Math.min(Math.max(0, x), maxX);
-    const clampedY = Math.min(Math.max(0, y), maxY);
+    const clampedX = Math.min(Math.max(0, centeredX), maxX);
+    const clampedY = Math.min(Math.max(0, centeredY), maxY);
 
     // Update ghost position
     $ghostState = {
@@ -176,11 +184,31 @@
           rotation: newRotation
         });
 
+        // Calculate the offset to center the ghost around the cursor
+        const offsetX = Math.floor(effectiveDimensions.width / 2);
+        const offsetY = Math.floor(effectiveDimensions.height / 2);
+
+        // Get the current cursor position (we'll use the center of the current ghost)
+        const currentCenterX = $ghostState.x + Math.floor(getEffectiveDimensions({
+          width: $ghostState.workstation.width,
+          height: $ghostState.workstation.height,
+          rotation: $ghostState.rotation
+        }).width / 2);
+        const currentCenterY = $ghostState.y + Math.floor(getEffectiveDimensions({
+          width: $ghostState.workstation.width,
+          height: $ghostState.workstation.height,
+          rotation: $ghostState.rotation
+        }).height / 2);
+
+        // Apply the offset to center the ghost with the new dimensions
+        const centeredX = currentCenterX - offsetX;
+        const centeredY = currentCenterY - offsetY;
+
         // Clamp x and y to ensure the ghost doesn't go off the right or bottom edge after rotation
         const maxX = $gridState[0].length - effectiveDimensions.width;
         const maxY = $gridState.length - effectiveDimensions.height;
-        const clampedX = Math.min(Math.max(0, $ghostState.x), maxX);
-        const clampedY = Math.min(Math.max(0, $ghostState.y), maxY);
+        const clampedX = Math.min(Math.max(0, centeredX), maxX);
+        const clampedY = Math.min(Math.max(0, centeredY), maxY);
 
         $ghostState = {
           ...$ghostState,
