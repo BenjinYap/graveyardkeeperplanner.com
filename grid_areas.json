@@ -1,0 +1,12 @@
+{
+  "a": { "name": "a", "x": 0, "y": 9, "width": 6, "height": 9 },
+  "b": { "name": "b", "x": 10, "y": 9, "width": 6, "height": 4 },
+  "c": { "name": "c", "x": 16, "y": 9, "width": 9, "height": 9 },
+  "d": { "name": "d", "x": 29, "y": 9, "width": 9, "height": 9 },
+  "e": { "name": "e", "x": 41, "y": 9, "width": 9, "height": 9 },
+  "f": { "name": "f", "x": 52, "y": 1, "width": 6, "height": 17 },
+  "g": { "name": "g", "x": 3, "y": 4, "width": 3, "height": 2 },
+  "i": { "name": "i", "x": 14, "y": 0, "width": 11, "height": 6 },
+  "j": { "name": "j", "x": 29, "y": 0, "width": 9, "height": 6 },
+  "k": { "name": "k", "x": 41, "y": 0, "width": 9, "height": 6 }
+}

@@ -4,9 +4,9 @@
   import { selectedWorkstation, placedWorkstations, gridState, ghostState, initializeGrid } from './stores';
   import { createPlacedWorkstation, getEffectiveDimensions } from './models/PlacedWorkstation';
 
-  // Initialize the grid with the desired dimensions
+  // Initialize the grid with the grid areas data
   onMount(() => {
-    initializeGrid(15, 15); // Adjust grid size as needed for the workyard
+    initializeGrid(); // Uses grid_areas.json by default
 
     // Add keyboard event listener for rotation
     window.addEventListener('keydown', handleKeyDown);
@@ -255,10 +255,11 @@
       return false;
     }
 
-    // Check if cells are occupied
+    // Check if cells are occupied or not buildable
     for (let dy = 0; dy < height; dy++) {
       for (let dx = 0; dx < width; dx++) {
-        if ($gridState[y + dy][x + dx].occupied) {
+        const cell = $gridState[y + dy][x + dx];
+        if (cell.occupied || !cell.buildable) {
           return false;
         }
       }
@@ -327,8 +328,19 @@
             <div 
               class="grid-cell"
               class:occupied={cell.occupied}
+              class:buildable={cell.buildable}
+              class:area-a={cell.area === 'a'}
+              class:area-bc={cell.area === 'bc'}
+              class:area-d={cell.area === 'd'}
+              class:area-e={cell.area === 'e'}
+              class:area-f={cell.area === 'f'}
+              class:area-g={cell.area === 'g'}
+              class:area-i={cell.area === 'i'}
+              class:area-j={cell.area === 'j'}
+              class:area-k={cell.area === 'k'}
               data-x={x}
               data-y={y}
+              data-area={cell.area}
             >
               <!-- Grid cell coordinates for debugging -->
               <span class="grid-coordinates">{x},{y}</span>
@@ -468,5 +480,56 @@
   .workstation-button.active {
     border-color: #646cff;
     background-color: rgba(100, 108, 255, 0.1);
+  }
+
+  /* Grid cell styling */
+  .grid-cell {
+    background-color: #333; /* Default color for non-buildable areas */
+    border: 1px solid #444;
+  }
+
+  .grid-cell.buildable {
+    background-color: #4a5; /* Default color for buildable areas */
+  }
+
+  /* Different colors for different areas */
+  .grid-cell.area-a {
+    background-color: #f94;
+  }
+
+  .grid-cell.area-bc {
+    background-color: #9af;
+  }
+
+  .grid-cell.area-d {
+    background-color: #f9a;
+  }
+
+  .grid-cell.area-e {
+    background-color: #af9;
+  }
+
+  .grid-cell.area-f {
+    background-color: #a9f;
+  }
+
+  .grid-cell.area-g {
+    background-color: #fa9;
+  }
+
+  .grid-cell.area-i {
+    background-color: #9fa;
+  }
+
+  .grid-cell.area-j {
+    background-color: #f99;
+  }
+
+  .grid-cell.area-k {
+    background-color: #99f;
+  }
+
+  .grid-cell.occupied {
+    background-color: #777;
   }
 </style>

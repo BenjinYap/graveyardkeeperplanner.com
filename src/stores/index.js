@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
-import { createGrid } from '../models/GridCell';
+import { createGrid, createGridFromAreas } from '../models/GridCell';
+import gridAreasData from '../../grid_areas.json';
 
 /**
  * Store for the currently selected workstation.
@@ -41,9 +42,14 @@ export const ghostState = writable({
 
 /**
  * Initializes the grid with the specified dimensions.
- * @param {number} width - Width of the grid in cells
- * @param {number} height - Height of the grid in cells
+ * @param {number} width - Width of the grid in cells (ignored if useGridAreas is true)
+ * @param {number} height - Height of the grid in cells (ignored if useGridAreas is true)
+ * @param {boolean} [useGridAreas=true] - Whether to use the grid areas data
  */
-export function initializeGrid(width, height) {
-  gridState.set(createGrid(width, height));
+export function initializeGrid(width, height, useGridAreas = true) {
+  if (useGridAreas) {
+    gridState.set(createGridFromAreas(gridAreasData));
+  } else {
+    gridState.set(createGrid(width, height));
+  }
 }
