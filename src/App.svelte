@@ -316,8 +316,7 @@
             "
             on:click|stopPropagation={() => handleWorkstationClick(placed)}
           >
-            <img src={placed.image} alt={placed.name} />
-            <div class="name">{placed.name}</div>
+            <div class="workstation-name">{placed.name}</div>
           </div>
         {/each}
 
@@ -339,7 +338,7 @@
               transform: rotate({$ghostState.rotation}deg);
             "
           >
-            <img src={$ghostState.workstation.image} alt={$ghostState.workstation.name} />
+            <div class="workstation-name">{$ghostState.workstation.name}</div>
             {#if $ghostState.workstation.canRotate}
               <div class="rotation-indicator">{$ghostState.rotation}°</div>
             {/if}
@@ -365,7 +364,6 @@
             class:active={$selectedWorkstation?.id === workstation.id}
             on:click={() => selectWorkstation(workstation)}
           >
-            <img src={workstation.image} alt={workstation.name} />
             <div class="info">
               <div class="name">{workstation.name}</div>
               <div class="size">{workstation.width}x{workstation.height}</div>

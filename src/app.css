@@ -213,11 +213,18 @@ button:focus-visible {
   z-index: 6;
 }
 
-.placed-workstation img {
+.placed-workstation .workstation-name {
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  padding: 1rem;
   width: 90%;
   height: 90%;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .placed-workstation .name {
@@ -255,12 +262,19 @@ button:focus-visible {
   height: 100%;
 }
 
-.workstation-ghost img {
+.workstation-ghost .workstation-name {
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  padding: 1rem;
   width: 90%;
   height: 90%;
-  object-fit: contain;
-  opacity: 0.6;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
 .workstation-ghost.valid {

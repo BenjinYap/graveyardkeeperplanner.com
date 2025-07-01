@@ -1,92 +1,25 @@
 import { createWorkstation } from '../models/Workstation';
+import workstationsData from '../../workstations.json';
 
 /**
- * Sample workstation data for Graveyard Keeper.
- * Note: This is placeholder data and should be replaced with actual game data.
- * Image paths are placeholders and should be replaced with actual image paths.
+ * Workstation data for Graveyard Keeper loaded from workstations.json.
+ * As per requirements, we're not using images anymore and displaying names instead.
  */
-export const workstations = [
-  createWorkstation({
-    id: 'stone_cutter',
-    name: 'Stone Cutter',
-    width: 2,
-    height: 2,
-    image: '/images/workstations/placeholder.svg',
+export const workstations = workstationsData.map(station => {
+  // Generate an ID from the name (lowercase, replace spaces with underscores)
+  const id = station.name.toLowerCase().replace(/\s+/g, '_');
+
+  return createWorkstation({
+    id,
+    name: station.name,
+    width: station.width,
+    height: station.height,
+    // No image as per requirements
+    image: null,
+    // Default to true for canRotate
     canRotate: true
-  }),
-  createWorkstation({
-    id: 'sawmill',
-    name: 'Sawmill',
-    width: 2,
-    height: 3,
-    image: '/images/workstations/placeholder.svg',
-    canRotate: true
-  }),
-  createWorkstation({
-    id: 'furnace',
-    name: 'Furnace',
-    width: 2,
-    height: 2,
-    image: '/images/workstations/placeholder.svg',
-    canRotate: false
-  }),
-  createWorkstation({
-    id: 'anvil',
-    name: 'Anvil',
-    width: 1,
-    height: 1,
-    image: '/images/workstations/placeholder.svg',
-    canRotate: false
-  }),
-  createWorkstation({
-    id: 'alchemy_workbench',
-    name: 'Alchemy Workbench',
-    width: 2,
-    height: 1,
-    image: '/images/workstations/placeholder.svg',
-    canRotate: true
-  }),
-  createWorkstation({
-    id: 'garden_bed',
-    name: 'Garden Bed',
-    width: 1,
-    height: 2,
-    image: '/images/workstations/placeholder.svg',
-    canRotate: true
-  }),
-  createWorkstation({
-    id: 'wood_processing',
-    name: 'Wood Processing',
-    width: 3,
-    height: 2,
-    image: '/images/workstations/placeholder.svg',
-    canRotate: true
-  }),
-  createWorkstation({
-    id: 'study_table',
-    name: 'Study Table',
-    width: 2,
-    height: 1,
-    image: '/images/workstations/placeholder.svg',
-    canRotate: true
-  }),
-  createWorkstation({
-    id: 'writing_desk',
-    name: 'Writing Desk',
-    width: 1,
-    height: 1,
-    image: '/images/workstations/placeholder.svg',
-    canRotate: false
-  }),
-  createWorkstation({
-    id: 'crematorium',
-    name: 'Crematorium',
-    width: 3,
-    height: 3,
-    image: '/images/workstations/placeholder.svg',
-    canRotate: false
-  })
-];
+  });
+});
 
 /**
  * Get a workstation by its ID.

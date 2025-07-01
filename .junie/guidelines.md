@@ -19,8 +19,7 @@ This is a list of all the available workstations.
 * It should display every available workstation, in a grid-like format.
   * Multiple workstations per row, multiple rows.
 * Every workstation is displayed as a selectable button.
-  * It should contain an image of the workstation.
-  * It should have the name of the workstation underneath the image.
+  * It should have the name of the workstation in the button.
   * It should have the grid size underneath the name.
 
 ### Workstation Placed on the Grid (Task #3)
@@ -28,8 +27,7 @@ This is a workstation that has been placed on the grid.
 
 * It should occupy the correct grid area on the workyard grid.
   * For example, a 3x2 workstation when placed on the grid should occupy a 3x2 area of cells.
-* It should contain an image of the workstation.
-  * It should have the name of the workstation underneath the image.
+* It should contain the name of the workstation.
 
 ## UX Experience
 This is what the user interaction functionality should look like:
