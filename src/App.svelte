@@ -168,10 +168,26 @@
       if ($ghostState.workstation && $ghostState.workstation.canRotate) {
         // Rotate the ghost - only toggle between 0 and 90 degrees
         const newRotation = $ghostState.rotation === 0 ? 90 : 0;
+
+        // Calculate effective dimensions after rotation
+        const effectiveDimensions = getEffectiveDimensions({
+          width: $ghostState.workstation.width,
+          height: $ghostState.workstation.height,
+          rotation: newRotation
+        });
+
+        // Clamp x and y to ensure the ghost doesn't go off the right or bottom edge after rotation
+        const maxX = $gridState[0].length - effectiveDimensions.width;
+        const maxY = $gridState.length - effectiveDimensions.height;
+        const clampedX = Math.min(Math.max(0, $ghostState.x), maxX);
+        const clampedY = Math.min(Math.max(0, $ghostState.y), maxY);
+
         $ghostState = {
           ...$ghostState,
+          x: clampedX,
+          y: clampedY,
           rotation: newRotation,
-          isValid: isValidPlacement($ghostState.x, $ghostState.y, $ghostState.workstation, newRotation)
+          isValid: isValidPlacement(clampedX, clampedY, $ghostState.workstation, newRotation)
         };
       }
     } else if (event.key === 'Escape') {
