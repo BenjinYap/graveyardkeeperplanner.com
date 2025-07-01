@@ -12,6 +12,8 @@ The purpose is to be a grid-based workstation planner for the various locations 
   * Dragging and dropping an existing workstation on the grid should also be possible.
     * Instead of having to hold down the mouse to drag, left clicking once should place it in "drag" mode.
 * Not every workstation can be rotated, ensure this is respected.
+* A workstation should occupy the correct number of cells in the grid based on its size.
+  * It should display its name inside its bounding box on the grid.
 
 ## Project Structure
 * The project will be built using Svelte (not SvelteKit), Vite, and Tailwind.
