@@ -207,10 +207,21 @@ button:focus-visible {
   height: 100%;
 }
 
+.workstation-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
 .placed-workstation:hover {
-  transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
   z-index: 6;
+}
+
+.placed-workstation:hover .workstation-content {
+  transform: scale(1.05);
 }
 
 .placed-workstation .workstation-name {
@@ -260,6 +271,14 @@ button:focus-visible {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
+}
+
+.ghost-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .workstation-ghost .workstation-name {

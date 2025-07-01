@@ -312,11 +312,20 @@
             style="
               grid-column: {placed.x + 1} / span {effectiveDimensions.width};
               grid-row: {placed.y + 1} / span {effectiveDimensions.height};
-              transform: rotate({placed.rotation}deg);
             "
             on:click|stopPropagation={() => handleWorkstationClick(placed)}
           >
-            <div class="workstation-name">{placed.name}</div>
+            <div 
+              class="workstation-content"
+              style="
+                width: 100%;
+                height: 100%;
+                transform: rotate({placed.rotation}deg);
+                transform-origin: center center;
+              "
+            >
+              <div class="workstation-name">{placed.name}</div>
+            </div>
           </div>
         {/each}
 
@@ -335,19 +344,28 @@
             style="
               grid-column: {$ghostState.x + 1} / span {effectiveDimensions.width};
               grid-row: {$ghostState.y + 1} / span {effectiveDimensions.height};
-              transform: rotate({$ghostState.rotation}deg);
             "
           >
-            <div class="workstation-name">{$ghostState.workstation.name}</div>
-            {#if $ghostState.workstation.canRotate}
-              <div class="rotation-indicator">{$ghostState.rotation}°</div>
-            {/if}
-            {#if $ghostState.originalPosition}
-              <div class="moving-indicator">Moving</div>
-            {/if}
-            <div class="debug-info">
-              Size: {$ghostState.workstation.width}x{$ghostState.workstation.height}<br>
-              Effective: {effectiveDimensions.width}x{effectiveDimensions.height}
+            <div 
+              class="ghost-content"
+              style="
+                width: 100%;
+                height: 100%;
+                transform: rotate({$ghostState.rotation}deg);
+                transform-origin: center center;
+              "
+            >
+              <div class="workstation-name">{$ghostState.workstation.name}</div>
+              {#if $ghostState.workstation.canRotate}
+                <div class="rotation-indicator">{$ghostState.rotation}°</div>
+              {/if}
+              {#if $ghostState.originalPosition}
+                <div class="moving-indicator">Moving</div>
+              {/if}
+              <div class="debug-info">
+                Size: {$ghostState.workstation.width}x{$ghostState.workstation.height}<br>
+                Effective: {effectiveDimensions.width}x{effectiveDimensions.height}
+              </div>
             </div>
           </div>
         {/if}
