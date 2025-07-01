@@ -46,12 +46,25 @@
     const x = Math.floor((event.clientX - gridRect.left) / cellWidth);
     const y = Math.floor((event.clientY - gridRect.top) / cellHeight);
 
+    // Get effective dimensions after rotation
+    const effectiveDimensions = getEffectiveDimensions({
+      width: $ghostState.workstation.width,
+      height: $ghostState.workstation.height,
+      rotation: $ghostState.rotation
+    });
+
+    // Clamp x and y to ensure the ghost doesn't go off the right or bottom edge
+    const maxX = $gridState[0].length - effectiveDimensions.width;
+    const maxY = $gridState.length - effectiveDimensions.height;
+    const clampedX = Math.min(Math.max(0, x), maxX);
+    const clampedY = Math.min(Math.max(0, y), maxY);
+
     // Update ghost position
     $ghostState = {
       ...$ghostState,
-      x,
-      y,
-      isValid: isValidPlacement(x, y, $ghostState.workstation, $ghostState.rotation)
+      x: clampedX,
+      y: clampedY,
+      isValid: isValidPlacement(clampedX, clampedY, $ghostState.workstation, $ghostState.rotation)
     };
   }
 
