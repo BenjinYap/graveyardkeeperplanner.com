@@ -272,19 +272,22 @@
     const { width, height } = getEffectiveDimensions(placedWorkstation);
     const { x, y } = placedWorkstation;
 
-    // Create a new grid state by only updating the affected cells
-    const newGridState = [...$gridState];
+    // Create a deep copy of the grid state to avoid unintended side effects
+    const newGridState = [];
+    for (let i = 0; i < $gridState.length; i++) {
+      newGridState[i] = [];
+      for (let j = 0; j < $gridState[i].length; j++) {
+        newGridState[i][j] = { ...$gridState[i][j] };
+      }
+    }
 
     for (let dy = 0; dy < height; dy++) {
       if (y + dy >= 0 && y + dy < newGridState.length) {
-        // Create a new row by copying the old one
-        newGridState[y + dy] = [...newGridState[y + dy]];
-
         for (let dx = 0; dx < width; dx++) {
           if (x + dx >= 0 && x + dx < newGridState[y + dy].length) {
-            // Update only the affected cell
+            // Update only the affected cell, preserving its coordinates
             newGridState[y + dy][x + dx] = {
-              ...newGridState[y + dy][x + dx],
+              ...$gridState[y + dy][x + dx],
               occupied: occupy,
               workstationId: occupy ? placedWorkstation.id : null
             };
