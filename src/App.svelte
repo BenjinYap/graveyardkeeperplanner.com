@@ -410,9 +410,6 @@
               "
             >
               <div class="workstation-name">{$ghostState.workstation.name}</div>
-              {#if $ghostState.originalPosition}
-                <div class="moving-indicator">Moving</div>
-              {/if}
             </div>
           </div>
         {/if}

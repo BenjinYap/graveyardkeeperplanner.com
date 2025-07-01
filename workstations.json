@@ -1,7 +1,7 @@
 [
-  { "name": "Trunk", "width": 2, "height": 3 },
+  { "name": "Trunk", "width": 3, "height": 2 },
   { "name": "Stone stockpile", "width": 5, "height": 4 },
-  { "name": "Timber stockpile", "width": 5, "height": 4 },
+  { "name": "Timber stockpile", "width": 5,   "height": 4 },
   { "name": "Iron ore stockpile", "width": 6, "height": 5 },
   { "name": "Stone cutter", "width": 5, "height": 3 },
   { "name": "Stone cutter II", "width": 6, "height": 5 },
@@ -18,7 +18,7 @@
   { "name": "Circular saw", "width": 5, "height": 4 },
   { "name": "Chopping spot", "width": 5, "height": 3 },
   { "name": "Potter's wheel", "width": 3, "height": 3 },
-  { "name": "Paper press", "width": 3, "height": 4 },
+  { "name": "Paper press", "width": 4, "height": 3 },
   { "name": "Jewelry table", "width": 5, "height": 3 },
   { "name": "Well", "width": 6, "height": 5 },
   { "name": "Water pump", "width": 3, "height": 3 },

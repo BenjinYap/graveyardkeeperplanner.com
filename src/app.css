@@ -140,7 +140,7 @@ button:focus-visible {
   grid-auto-columns: 0;
   grid-auto-rows: 0;
   grid-auto-flow: dense;
-  gap: 2px;
+  /*gap: 2px;*/
   background-color: #5a4d41; /* Dirt color between grid cells */
   padding: 4px;
   width: 100%;
@@ -259,6 +259,7 @@ button:focus-visible {
   position: relative;
   z-index: 6; /* Higher than the clickable area to ensure it's not clickable */
   pointer-events: none; /* Ensures clicks pass through to elements below */
+  transform: rotate(0deg) !important; /* Prevent rotation affecting the name */
 }
 
 .placed-workstation .name {
@@ -316,6 +317,7 @@ button:focus-visible {
   justify-content: center;
   opacity: 0.8;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  transform: rotate(0deg) !important; /* Prevent rotation affecting the name */
 }
 
 .workstation-ghost.valid {
