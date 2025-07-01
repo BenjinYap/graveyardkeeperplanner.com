@@ -195,7 +195,7 @@ export const ghostState = writable({
 - Implement Task #3: Workstation Placed on the Grid
 - Implement basic placement without ghost functionality
 - Set up state management between components
-
+nbhhhhhhjnbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 ### Phase 4: Advanced Interactions (Week 4)
 - Implement Task #4: Selecting and Placing with Ghost
 - Add rotation functionality
