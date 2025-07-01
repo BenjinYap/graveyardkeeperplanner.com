@@ -360,7 +360,6 @@
               width: calc({effectiveDimensions.width} * (100% / var(--grid-cols)));
               height: calc({effectiveDimensions.height} * (100% / var(--grid-rows)));
             "
-            on:click|stopPropagation={() => handleWorkstationClick(placed)}
           >
             <div 
               class="workstation-content"
@@ -371,6 +370,11 @@
                 transform-origin: center center;
               "
             >
+              <!-- Clickable area that excludes the name -->
+              <div 
+                class="workstation-clickable-area"
+                on:click|stopPropagation={() => handleWorkstationClick(placed)}
+              ></div>
               <div class="workstation-name">{placed.name}</div>
             </div>
           </div>

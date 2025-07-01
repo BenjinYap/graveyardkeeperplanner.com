@@ -203,11 +203,11 @@ button:focus-visible {
   justify-content: center;
   z-index: 5;
   box-sizing: border-box;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.2s ease; /* Changed to all for smoother transitions */
   background-color: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
+  /* cursor: pointer; */ /* Removed as we're using the clickable area instead */
   /* width and height are now set inline */
 }
 
@@ -219,13 +219,29 @@ button:focus-visible {
   box-sizing: border-box;
 }
 
+/* Enhanced hover effect */
 .placed-workstation:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5), 0 0 15px rgba(100, 200, 255, 0.6);
+  border: 2px solid rgba(100, 200, 255, 0.7);
   z-index: 6;
+  background-color: rgba(100, 200, 255, 0.2);
+  transition: all 0.2s ease;
 }
 
 .placed-workstation:hover .workstation-content {
   transform: scale(1.05);
+}
+
+/* Clickable area that covers the entire workstation except the name */
+.workstation-clickable-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  cursor: pointer;
+  background-color: transparent;
 }
 
 .placed-workstation .workstation-name {
@@ -240,6 +256,9 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 6; /* Higher than the clickable area to ensure it's not clickable */
+  pointer-events: none; /* Ensures clicks pass through to elements below */
 }
 
 .placed-workstation .name {
