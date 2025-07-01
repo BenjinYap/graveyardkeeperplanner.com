@@ -153,8 +153,8 @@
   function handleKeyDown(event) {
     if (event.key === 'r' || event.key === 'R') {
       if ($ghostState.workstation && $ghostState.workstation.canRotate) {
-        // Rotate the ghost
-        const newRotation = ($ghostState.rotation + 90) % 360;
+        // Rotate the ghost - only toggle between 0 and 90 degrees
+        const newRotation = $ghostState.rotation === 0 ? 90 : 0;
         $ghostState = {
           ...$ghostState,
           rotation: newRotation,
@@ -356,16 +356,9 @@
               "
             >
               <div class="workstation-name">{$ghostState.workstation.name}</div>
-              {#if $ghostState.workstation.canRotate}
-                <div class="rotation-indicator">{$ghostState.rotation}°</div>
-              {/if}
               {#if $ghostState.originalPosition}
                 <div class="moving-indicator">Moving</div>
               {/if}
-              <div class="debug-info">
-                Size: {$ghostState.workstation.width}x{$ghostState.workstation.height}<br>
-                Effective: {effectiveDimensions.width}x{effectiveDimensions.height}
-              </div>
             </div>
           </div>
         {/if}

@@ -9,7 +9,7 @@
  * @property {boolean} canRotate - Whether the workstation can be rotated
  * @property {number} x - X coordinate on the grid
  * @property {number} y - Y coordinate on the grid
- * @property {number} rotation - Rotation in degrees (0, 90, 180, 270)
+ * @property {number} rotation - Rotation in degrees (0 or 90)
  */
 
 import { createWorkstation } from './Workstation';
@@ -19,7 +19,7 @@ import { createWorkstation } from './Workstation';
  * @param {Object} workstation - The base workstation object
  * @param {number} x - X coordinate on the grid
  * @param {number} y - Y coordinate on the grid
- * @param {number} rotation - Rotation in degrees (0, 90, 180, 270)
+ * @param {number} rotation - Rotation in degrees (0 or 90)
  * @returns {PlacedWorkstation} A new PlacedWorkstation object
  */
 export function createPlacedWorkstation(workstation, x, y, rotation = 0) {
@@ -38,8 +38,8 @@ export function createPlacedWorkstation(workstation, x, y, rotation = 0) {
  */
 export function getEffectiveDimensions(placedWorkstation) {
   const { width, height, rotation } = placedWorkstation;
-  // If rotation is 90 or 270 degrees, swap width and height
-  if (rotation === 90 || rotation === 270) {
+  // If rotation is 90 degrees, swap width and height
+  if (rotation === 90) {
     return { width: height, height: width };
   }
   return { width, height };
