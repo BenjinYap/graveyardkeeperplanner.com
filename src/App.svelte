@@ -72,16 +72,42 @@
   function handleGridClick() {
     if (!$ghostState.workstation || !$ghostState.isValid) return;
 
-    // Place the workstation
-    const placedWorkstation = createPlacedWorkstation(
-      $ghostState.workstation,
-      $ghostState.x,
-      $ghostState.y,
-      $ghostState.rotation
-    );
+    // If we're moving an existing workstation
+    if ($ghostState.originalPosition) {
+      // Find the workstation in the placed workstations array
+      const workstationIndex = $placedWorkstations.findIndex(
+        ws => ws.id === $ghostState.workstation.id && 
+             ws.x === $ghostState.originalPosition.x && 
+             ws.y === $ghostState.originalPosition.y
+      );
 
-    $placedWorkstations = [...$placedWorkstations, placedWorkstation];
-    updateGridOccupancy(placedWorkstation, true);
+      // Remove the workstation from its original position
+      if (workstationIndex !== -1) {
+        $placedWorkstations = $placedWorkstations.filter((_, index) => index !== workstationIndex);
+      }
+
+      // Place the workstation at the new position
+      const placedWorkstation = createPlacedWorkstation(
+        $ghostState.workstation,
+        $ghostState.x,
+        $ghostState.y,
+        $ghostState.rotation
+      );
+
+      $placedWorkstations = [...$placedWorkstations, placedWorkstation];
+      updateGridOccupancy(placedWorkstation, true);
+    } else {
+      // Place a new workstation
+      const placedWorkstation = createPlacedWorkstation(
+        $ghostState.workstation,
+        $ghostState.x,
+        $ghostState.y,
+        $ghostState.rotation
+      );
+
+      $placedWorkstations = [...$placedWorkstations, placedWorkstation];
+      updateGridOccupancy(placedWorkstation, true);
+    }
 
     // Reset selection and ghost
     $selectedWorkstation = null;
@@ -93,6 +119,34 @@
       isValid: false,
       originalPosition: null
     };
+  }
+
+  // Handle click on a placed workstation
+  function handleWorkstationClick(placed) {
+    // Clear the grid cells occupied by this workstation
+    updateGridOccupancy(placed, false);
+
+    // Remove the workstation from the placed workstations array
+    $placedWorkstations = $placedWorkstations.filter(
+      ws => !(ws.id === placed.id && ws.x === placed.x && ws.y === placed.y)
+    );
+
+    // Set the ghost state to the picked-up workstation
+    $ghostState = {
+      workstation: placed,
+      x: placed.x,
+      y: placed.y,
+      rotation: placed.rotation,
+      isValid: true,
+      originalPosition: {
+        x: placed.x,
+        y: placed.y,
+        rotation: placed.rotation
+      }
+    };
+
+    // Also set the selected workstation to match
+    $selectedWorkstation = placed;
   }
 
   // Handle keyboard events
@@ -111,7 +165,36 @@
       // Cancel placement
       if ($ghostState.originalPosition) {
         // Return to original position if moving an existing workstation
-        // (This will be implemented in Task #5)
+        const originalIndex = $placedWorkstations.findIndex(
+          ws => ws.id === $ghostState.workstation.id && 
+               ws.x === $ghostState.originalPosition.x && 
+               ws.y === $ghostState.originalPosition.y
+        );
+
+        // Create a workstation at the original position
+        const returnedWorkstation = createPlacedWorkstation(
+          $ghostState.workstation,
+          $ghostState.originalPosition.x,
+          $ghostState.originalPosition.y,
+          $ghostState.originalPosition.rotation
+        );
+
+        // Add it back to the placed workstations array
+        $placedWorkstations = [...$placedWorkstations, returnedWorkstation];
+
+        // Update grid occupancy to mark cells as occupied
+        updateGridOccupancy(returnedWorkstation, true);
+
+        // Reset ghost and selection
+        $selectedWorkstation = null;
+        $ghostState = {
+          workstation: null,
+          x: 0,
+          y: 0,
+          rotation: 0,
+          isValid: false,
+          originalPosition: null
+        };
       } else {
         // Cancel new placement
         $selectedWorkstation = null;
@@ -160,21 +243,29 @@
     const { width, height } = getEffectiveDimensions(placedWorkstation);
     const { x, y } = placedWorkstation;
 
-    $gridState = $gridState.map((row, rowIndex) => {
-      if (rowIndex >= y && rowIndex < y + height) {
-        return row.map((cell, colIndex) => {
-          if (colIndex >= x && colIndex < x + width) {
-            return {
-              ...cell,
+    // Create a new grid state by only updating the affected cells
+    const newGridState = [...$gridState];
+
+    for (let dy = 0; dy < height; dy++) {
+      if (y + dy >= 0 && y + dy < newGridState.length) {
+        // Create a new row by copying the old one
+        newGridState[y + dy] = [...newGridState[y + dy]];
+
+        for (let dx = 0; dx < width; dx++) {
+          if (x + dx >= 0 && x + dx < newGridState[y + dy].length) {
+            // Update only the affected cell
+            newGridState[y + dy][x + dx] = {
+              ...newGridState[y + dy][x + dx],
               occupied: occupy,
               workstationId: occupy ? placedWorkstation.id : null
             };
           }
-          return cell;
-        });
+        }
       }
-      return row;
-    });
+    }
+
+    // Update the grid state with the new state
+    $gridState = newGridState;
   }
 </script>
 
@@ -223,6 +314,7 @@
               grid-row: {placed.y + 1} / span {effectiveDimensions.height};
               transform: rotate({placed.rotation}deg);
             "
+            on:click|stopPropagation={() => handleWorkstationClick(placed)}
           >
             <img src={placed.image} alt={placed.name} />
             <div class="name">{placed.name}</div>
@@ -240,6 +332,7 @@
             class="workstation-ghost"
             class:valid={$ghostState.isValid}
             class:invalid={!$ghostState.isValid}
+            class:moving={$ghostState.originalPosition !== null}
             style="
               grid-column: {$ghostState.x + 1} / span {effectiveDimensions.width};
               grid-row: {$ghostState.y + 1} / span {effectiveDimensions.height};
@@ -249,6 +342,9 @@
             <img src={$ghostState.workstation.image} alt={$ghostState.workstation.name} />
             {#if $ghostState.workstation.canRotate}
               <div class="rotation-indicator">{$ghostState.rotation}°</div>
+            {/if}
+            {#if $ghostState.originalPosition}
+              <div class="moving-indicator">Moving</div>
             {/if}
             <div class="debug-info">
               Size: {$ghostState.workstation.width}x{$ghostState.workstation.height}<br>
@@ -281,7 +377,11 @@
   </div>
 
   <footer>
-    <p>Instructions: Select a workstation from the list, then click on the grid to place it. Press R to rotate.</p>
+    <p>
+      Instructions: Select a workstation from the list, then click on the grid to place it. 
+      Click on a placed workstation to pick it up and move it. 
+      Press R to rotate. Press Escape to cancel placement or return a workstation to its original position.
+    </p>
   </footer>
 </main>
 
