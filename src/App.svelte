@@ -8,30 +8,8 @@
   let draggedWorkstation = null;
   let gridData = [];
 
-  // Function to load grid data for a specific location
-  function loadGridData(location) {
-    const savedData = localStorage.getItem(`gridData_${location}`);
-    if (savedData) {
-      gridData = JSON.parse(savedData);
-    } else {
-      gridData = []; // Reset grid data if no saved data exists
-    }
-  }
-
-  // Load saved grid data from localStorage when component mounts
-  onMount(() => {
-    loadGridData(selectedLocation);
-  });
-
-  // Reload grid data when selectedLocation changes
-  $: selectedLocation, loadGridData(selectedLocation);
-
-  // Save grid data to localStorage whenever it changes
-  $: {
-    if (gridData.length > 0) {
-      localStorage.setItem(`gridData_${selectedLocation}`, JSON.stringify(gridData));
-    }
-  }
+  // Reset grid data when location changes
+  $: selectedLocation, gridData = [];
 
   // Handle workstation selection for dragging
   function handleWorkstationSelect(event) {
@@ -41,6 +19,12 @@
   // Handle workstation placement on grid
   function handlePlaceWorkstation(event) {
     const { x, y, workstation } = event.detail;
+
+    // First, if the workstation was dragged from the grid (has original position)
+    // remove it from its original position
+    if (draggedWorkstation && draggedWorkstation.x !== undefined && draggedWorkstation.y !== undefined) {
+      gridData = gridData.filter(item => !(item.x === draggedWorkstation.x && item.y === draggedWorkstation.y));
+    }
 
     // Check if there's already a workstation at this position
     const existingIndex = gridData.findIndex(item => item.x === x && item.y === y);

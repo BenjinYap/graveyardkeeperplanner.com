@@ -15,6 +15,9 @@
   let hoverY = -1;
   let isRotated = false;
 
+  // Reset rotation state when a new workstation is selected
+  $: draggedWorkstation, isRotated = false;
+
   // Handle cell click
   function handleCellClick(x, y) {
     if (draggedWorkstation) {
@@ -32,10 +35,9 @@
       const existingWorkstation = gridData.find(item => item.x === x && item.y === y);
 
       if (existingWorkstation) {
-        // Select for dragging
+        // Select for dragging without removing from grid
         draggedWorkstation = { ...existingWorkstation };
-        // Remove the workstation from the grid
-        dispatch('remove', { x, y });
+        // Only remove after placing it somewhere else
       }
     }
   }
