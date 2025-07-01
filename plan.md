@@ -1,7 +1,7 @@
 # Graveyard Keeper Workyard Planner - Implementation Plan
 
 ## Project Overview
-This document outlines the implementation plan for the Graveyard Keeper Workyard Planner, a web application that allows users to plan their workyard layout before building it in the game. The application will be built using Svelte, Vite, and Tailwind CSS, with all functionality implemented on the frontend to support S3 hosting.
+This document outlines the implementation plan for the Graveyard Keeper Workyard Planner, a web application that allows users to plan their workyard layout before building it in the game. The application will be built using Svelte, Vite, and vanilla CSS, with all functionality implemented on the frontend to support S3 hosting.
 
 ## Data Models
 

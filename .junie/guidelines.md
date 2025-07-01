@@ -57,7 +57,7 @@ This is what the user interaction functionality should look like:
 * Pressing the Escape key should cancel this action and place the workstation back in its original location.
 
 ## Project Structure
-* The project will be built using Svelte (not SvelteKit), Vite, and Tailwind.
+* The project will be built using Svelte (not SvelteKit), Vite, and vanilla CSS.
 * When the project is built using the build command, it should produce a single file (with a constant name between builds) for the entry point, script file, and css file.
   * The future intent is to host this website on S3.
 * The website must not have a backend functionality. Everything must exist on the frontend.

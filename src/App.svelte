@@ -1,47 +1,120 @@
 <script>
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  import { onMount } from 'svelte';
+  import { workstations } from './data/workstations';
+  import { selectedWorkstation, placedWorkstations, gridState, ghostState, initializeGrid } from './stores';
+
+  // Initialize the grid with the desired dimensions
+  onMount(() => {
+    initializeGrid(15, 15); // Adjust grid size as needed for the workyard
+  });
+
+  // Handle workstation selection
+  function selectWorkstation(workstation) {
+    $selectedWorkstation = workstation;
+  }
 </script>
 
 <main>
-  <div>
-    <a href="https://vite.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
+  <header>
+    <h1>Graveyard Keeper Workyard Planner</h1>
+    <p>Plan your workyard layout before building it in the game</p>
+  </header>
+
+  <div class="planner-container">
+    <!-- Workstation Selector (Task #2) -->
+    <section class="workstation-selector">
+      <h2>Available Workstations</h2>
+      <div class="grid-container">
+        {#each workstations as workstation}
+          <button 
+            class="workstation-button" 
+            class:active={$selectedWorkstation?.id === workstation.id}
+            on:click={() => selectWorkstation(workstation)}
+          >
+            <img src={workstation.image} alt={workstation.name} />
+            <div class="name">{workstation.name}</div>
+            <div class="size">{workstation.width}x{workstation.height}</div>
+          </button>
+        {/each}
+      </div>
+    </section>
+
+    <!-- Workyard Grid (Task #1) -->
+    <section class="workyard-container">
+      <h2>Workyard Grid</h2>
+      <div 
+        class="workyard-grid"
+        style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length};"
+      >
+        {#each $gridState as row, y}
+          {#each row as cell, x}
+            <div 
+              class="grid-cell"
+              class:occupied={cell.occupied}
+              data-x={x}
+              data-y={y}
+            ></div>
+          {/each}
+        {/each}
+
+        <!-- Placed Workstations (Task #3) -->
+        {#each $placedWorkstations as placed}
+          <div 
+            class="placed-workstation"
+            style="
+              grid-column: {placed.x + 1} / span {placed.width};
+              grid-row: {placed.y + 1} / span {placed.height};
+              transform: rotate({placed.rotation}deg);
+            "
+          >
+            <img src={placed.image} alt={placed.name} />
+            <div class="name">{placed.name}</div>
+          </div>
+        {/each}
+      </div>
+    </section>
   </div>
-  <h1>Vite + Svelte</h1>
 
-  <div class="card">
-    <Counter />
-  </div>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+  <footer>
+    <p>Instructions: Select a workstation from the list, then click on the grid to place it. Press R to rotate.</p>
+  </footer>
 </main>
 
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
+  header, footer {
+    text-align: center;
+    padding: 1rem;
   }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
+
+  .planner-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
   }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
+
+  @media (min-width: 768px) {
+    .planner-container {
+      flex-direction: row;
+    }
+
+    .workstation-selector {
+      flex: 1;
+    }
+
+    .workyard-container {
+      flex: 2;
+    }
   }
-  .read-the-docs {
-    color: #888;
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  .workstation-button.active {
+    border-color: #646cff;
+    background-color: rgba(100, 108, 255, 0.1);
   }
 </style>
