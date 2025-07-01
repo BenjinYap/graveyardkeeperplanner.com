@@ -75,20 +75,21 @@ App
 **Implementation Steps:**
 1. Research and compile a list of all workstations in Graveyard Keeper
 2. Gather images and size information for each workstation
-3. Create a `WorkstationSelector` component that displays workstations in a grid
+3. Create a `WorkstationSelector` component that displays workstations in a vertical list
 4. Implement `WorkstationButton` components for each workstation
 5. Style the selector to be visually appealing and user-friendly
 
 **Technical Considerations:**
 - Optimize workstation images for web display
 - Implement filtering or categorization if the list becomes too long
-- Use CSS Grid for the selector layout
+- Use a vertical layout for the selector to maximize screen space for the workyard grid
 
 **Acceptance Criteria:**
 - All workstations are displayed with correct images
 - Each workstation shows its name and grid size
-- Selector has a grid layout with multiple workstations per row
+- Selector has a vertical list layout with one workstation per row
 - Workstations are selectable via clicking
+- The selector should be positioned to allow the workyard grid to be the central and largest UI element
 
 ### Task #3: Workstation Placed on the Grid
 **Objective:** Implement the visual representation of workstations placed on the grid.

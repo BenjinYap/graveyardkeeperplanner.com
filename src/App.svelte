@@ -2,15 +2,179 @@
   import { onMount } from 'svelte';
   import { workstations } from './data/workstations';
   import { selectedWorkstation, placedWorkstations, gridState, ghostState, initializeGrid } from './stores';
+  import { createPlacedWorkstation, getEffectiveDimensions } from './models/PlacedWorkstation';
 
   // Initialize the grid with the desired dimensions
   onMount(() => {
     initializeGrid(15, 15); // Adjust grid size as needed for the workyard
+
+    // Add keyboard event listener for rotation
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   });
 
   // Handle workstation selection
   function selectWorkstation(workstation) {
     $selectedWorkstation = workstation;
+
+    // Initialize ghost state when a workstation is selected
+    if (workstation) {
+      $ghostState = {
+        workstation,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        isValid: false,
+        originalPosition: null
+      };
+    }
+  }
+
+  // Handle mouse movement over the grid
+  function handleGridMouseMove(event) {
+    if (!$ghostState.workstation) return;
+
+    // Get the grid cell element under the cursor
+    const gridRect = event.currentTarget.getBoundingClientRect();
+    const cellWidth = gridRect.width / $gridState[0].length;
+    const cellHeight = gridRect.height / $gridState.length;
+
+    // Calculate the grid coordinates
+    const x = Math.floor((event.clientX - gridRect.left) / cellWidth);
+    const y = Math.floor((event.clientY - gridRect.top) / cellHeight);
+
+    // Update ghost position
+    $ghostState = {
+      ...$ghostState,
+      x,
+      y,
+      isValid: isValidPlacement(x, y, $ghostState.workstation, $ghostState.rotation)
+    };
+  }
+
+  // Handle mouse leaving the grid
+  function handleGridMouseLeave() {
+    if (!$ghostState.workstation) return;
+
+    // Hide the ghost when mouse leaves the grid
+    $ghostState = {
+      ...$ghostState,
+      x: -1000, // Move off-screen
+      y: -1000,
+      isValid: false
+    };
+  }
+
+  // Handle click on the grid
+  function handleGridClick() {
+    if (!$ghostState.workstation || !$ghostState.isValid) return;
+
+    // Place the workstation
+    const placedWorkstation = createPlacedWorkstation(
+      $ghostState.workstation,
+      $ghostState.x,
+      $ghostState.y,
+      $ghostState.rotation
+    );
+
+    $placedWorkstations = [...$placedWorkstations, placedWorkstation];
+    updateGridOccupancy(placedWorkstation, true);
+
+    // Reset selection and ghost
+    $selectedWorkstation = null;
+    $ghostState = {
+      workstation: null,
+      x: 0,
+      y: 0,
+      rotation: 0,
+      isValid: false,
+      originalPosition: null
+    };
+  }
+
+  // Handle keyboard events
+  function handleKeyDown(event) {
+    if (event.key === 'r' || event.key === 'R') {
+      if ($ghostState.workstation && $ghostState.workstation.canRotate) {
+        // Rotate the ghost
+        const newRotation = ($ghostState.rotation + 90) % 360;
+        $ghostState = {
+          ...$ghostState,
+          rotation: newRotation,
+          isValid: isValidPlacement($ghostState.x, $ghostState.y, $ghostState.workstation, newRotation)
+        };
+      }
+    } else if (event.key === 'Escape') {
+      // Cancel placement
+      if ($ghostState.originalPosition) {
+        // Return to original position if moving an existing workstation
+        // (This will be implemented in Task #5)
+      } else {
+        // Cancel new placement
+        $selectedWorkstation = null;
+        $ghostState = {
+          workstation: null,
+          x: 0,
+          y: 0,
+          rotation: 0,
+          isValid: false,
+          originalPosition: null
+        };
+      }
+    }
+  }
+
+  // Check if placement is valid
+  function isValidPlacement(x, y, workstation, rotation) {
+    if (!workstation) return false;
+
+    // Get effective dimensions after rotation
+    const { width, height } = getEffectiveDimensions({ 
+      width: workstation.width, 
+      height: workstation.height, 
+      rotation 
+    });
+
+    // Check if within grid bounds
+    if (x < 0 || y < 0 || x + width > $gridState[0].length || y + height > $gridState.length) {
+      return false;
+    }
+
+    // Check if cells are occupied
+    for (let dy = 0; dy < height; dy++) {
+      for (let dx = 0; dx < width; dx++) {
+        if ($gridState[y + dy][x + dx].occupied) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  // Update grid occupancy
+  function updateGridOccupancy(placedWorkstation, occupy) {
+    const { width, height } = getEffectiveDimensions(placedWorkstation);
+    const { x, y } = placedWorkstation;
+
+    $gridState = $gridState.map((row, rowIndex) => {
+      if (rowIndex >= y && rowIndex < y + height) {
+        return row.map((cell, colIndex) => {
+          if (colIndex >= x && colIndex < x + width) {
+            return {
+              ...cell,
+              occupied: occupy,
+              workstationId: occupy ? placedWorkstation.id : null
+            };
+          }
+          return cell;
+        });
+      }
+      return row;
+    });
   }
 </script>
 
@@ -21,31 +185,20 @@
   </header>
 
   <div class="planner-container">
-    <!-- Workstation Selector (Task #2) -->
-    <section class="workstation-selector">
-      <h2>Available Workstations</h2>
-      <div class="grid-container">
-        {#each workstations as workstation}
-          <button 
-            class="workstation-button" 
-            class:active={$selectedWorkstation?.id === workstation.id}
-            on:click={() => selectWorkstation(workstation)}
-          >
-            <img src={workstation.image} alt={workstation.name} />
-            <div class="name">{workstation.name}</div>
-            <div class="size">{workstation.width}x{workstation.height}</div>
-          </button>
-        {/each}
-      </div>
-    </section>
-
-    <!-- Workyard Grid (Task #1) -->
+    <!-- Workyard Grid (Task #1) - Now central and largest element -->
     <section class="workyard-container">
       <h2>Workyard Grid</h2>
       <div 
         class="workyard-grid"
         style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length};"
+        on:mousemove={handleGridMouseMove}
+        on:mouseleave={handleGridMouseLeave}
+        on:click={handleGridClick}
       >
+        <!-- Grid background with texture -->
+        <div class="grid-background"></div>
+
+        <!-- Grid cells -->
         {#each $gridState as row, y}
           {#each row as cell, x}
             <div 
@@ -53,23 +206,71 @@
               class:occupied={cell.occupied}
               data-x={x}
               data-y={y}
-            ></div>
+            >
+              <!-- Grid cell coordinates for debugging -->
+              <span class="grid-coordinates">{x},{y}</span>
+            </div>
           {/each}
         {/each}
 
         <!-- Placed Workstations (Task #3) -->
         {#each $placedWorkstations as placed}
+          {@const effectiveDimensions = getEffectiveDimensions(placed)}
           <div 
             class="placed-workstation"
             style="
-              grid-column: {placed.x + 1} / span {placed.width};
-              grid-row: {placed.y + 1} / span {placed.height};
+              grid-column: {placed.x + 1} / span {effectiveDimensions.width};
+              grid-row: {placed.y + 1} / span {effectiveDimensions.height};
               transform: rotate({placed.rotation}deg);
             "
           >
             <img src={placed.image} alt={placed.name} />
             <div class="name">{placed.name}</div>
           </div>
+        {/each}
+
+        <!-- Ghost Workstation (for placement preview) -->
+        {#if $ghostState.workstation && $ghostState.x >= 0 && $ghostState.y >= 0}
+          {@const effectiveDimensions = getEffectiveDimensions({
+            width: $ghostState.workstation.width,
+            height: $ghostState.workstation.height,
+            rotation: $ghostState.rotation
+          })}
+          <div 
+            class="workstation-ghost"
+            class:valid={$ghostState.isValid}
+            class:invalid={!$ghostState.isValid}
+            style="
+              grid-column: {$ghostState.x + 1} / span {effectiveDimensions.width};
+              grid-row: {$ghostState.y + 1} / span {effectiveDimensions.height};
+              transform: rotate({$ghostState.rotation}deg);
+            "
+          >
+            <img src={$ghostState.workstation.image} alt={$ghostState.workstation.name} />
+            {#if $ghostState.workstation.canRotate}
+              <div class="rotation-indicator">{$ghostState.rotation}°</div>
+            {/if}
+          </div>
+        {/if}
+      </div>
+    </section>
+
+    <!-- Workstation Selector (Task #2) - Now a vertical list -->
+    <section class="workstation-selector">
+      <h2>Available Workstations</h2>
+      <div class="workstation-list">
+        {#each workstations as workstation}
+          <button 
+            class="workstation-button" 
+            class:active={$selectedWorkstation?.id === workstation.id}
+            on:click={() => selectWorkstation(workstation)}
+          >
+            <img src={workstation.image} alt={workstation.name} />
+            <div class="info">
+              <div class="name">{workstation.name}</div>
+              <div class="size">{workstation.width}x{workstation.height}</div>
+            </div>
+          </button>
         {/each}
       </div>
     </section>
@@ -98,14 +299,20 @@
   @media (min-width: 768px) {
     .planner-container {
       flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
     }
 
     .workstation-selector {
-      flex: 1;
+      flex: 0 0 250px;
+      order: 2; /* Move to the right side */
+      margin-left: 1rem;
     }
 
     .workyard-container {
-      flex: 2;
+      flex: 1 1 auto;
+      order: 1; /* Move to the left/center */
+      max-width: 800px;
     }
   }
 
