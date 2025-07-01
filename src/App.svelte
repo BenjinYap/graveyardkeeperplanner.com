@@ -348,14 +348,17 @@
           {/each}
         {/each}
 
-        <!-- Placed Workstations (Task #3) -->
+        <!-- Placed Workstations (Task #3) - Absolutely positioned -->
         {#each $placedWorkstations as placed}
           {@const effectiveDimensions = getEffectiveDimensions(placed)}
           <div 
             class="placed-workstation"
             style="
-              grid-column: {placed.x + 1} / span {effectiveDimensions.width};
-              grid-row: {placed.y + 1} / span {effectiveDimensions.height};
+              position: absolute;
+              left: calc({placed.x} * (100% / var(--grid-cols)));
+              top: calc({placed.y} * (100% / var(--grid-rows)));
+              width: calc({effectiveDimensions.width} * (100% / var(--grid-cols)));
+              height: calc({effectiveDimensions.height} * (100% / var(--grid-rows)));
             "
             on:click|stopPropagation={() => handleWorkstationClick(placed)}
           >
@@ -373,7 +376,7 @@
           </div>
         {/each}
 
-        <!-- Ghost Workstation (for placement preview) -->
+        <!-- Ghost Workstation (for placement preview) - Absolutely positioned -->
         {#if $ghostState.workstation && $ghostState.x >= 0 && $ghostState.y >= 0}
           {@const effectiveDimensions = getEffectiveDimensions({
             width: $ghostState.workstation.width,
@@ -386,8 +389,11 @@
             class:invalid={!$ghostState.isValid}
             class:moving={$ghostState.originalPosition !== null}
             style="
-              grid-column: {$ghostState.x + 1} / span {effectiveDimensions.width};
-              grid-row: {$ghostState.y + 1} / span {effectiveDimensions.height};
+              position: absolute;
+              left: calc({$ghostState.x} * (100% / var(--grid-cols)));
+              top: calc({$ghostState.y} * (100% / var(--grid-rows)));
+              width: calc({effectiveDimensions.width} * (100% / var(--grid-cols)));
+              height: calc({effectiveDimensions.height} * (100% / var(--grid-rows)));
             "
           >
             <div 
