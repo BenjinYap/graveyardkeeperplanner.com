@@ -250,6 +250,10 @@
             {#if $ghostState.workstation.canRotate}
               <div class="rotation-indicator">{$ghostState.rotation}°</div>
             {/if}
+            <div class="debug-info">
+              Size: {$ghostState.workstation.width}x{$ghostState.workstation.height}<br>
+              Effective: {effectiveDimensions.width}x{effectiveDimensions.height}
+            </div>
           </div>
         {/if}
       </div>
