@@ -127,12 +127,13 @@ button:focus-visible {
 /* Workyard grid styles */
 .workyard-container {
   position: relative;
-  overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  height:300px;
 }
 
 .workyard-grid {
+  height:100%;
   display: grid;
   grid-template-columns: repeat(var(--grid-cols, 10), minmax(0, 1fr));
   grid-template-rows: repeat(var(--grid-rows, 10), minmax(0, 1fr));
