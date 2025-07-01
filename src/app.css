@@ -268,7 +268,7 @@ button:focus-visible {
   position: absolute; /* Changed from relative to absolute */
   pointer-events: none;
   z-index: 10;
-  transition: all 0.2s ease;
+  /* Removed transition for instant cursor following */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -343,7 +343,7 @@ button:focus-visible {
   z-index: 20;
   transform: rotate(0deg) !important; /* Prevent rotation affecting the indicator */
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  animation: pulse 1.5s infinite;
+  /* Removed animation for instant cursor following */
 }
 
 @keyframes pulse {
@@ -355,7 +355,7 @@ button:focus-visible {
 /* Special styling for moving workstations */
 .workstation-ghost.moving {
   border-style: dashed;
-  animation: moving-glow 2s infinite;
+  /* Removed animation for instant cursor following */
 }
 
 @keyframes moving-glow {
