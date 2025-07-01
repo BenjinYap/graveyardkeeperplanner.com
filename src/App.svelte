@@ -338,7 +338,7 @@
 
 <main>
   <header>
-    <h1>Graveyard Keeper Workyard Planner</h1>
+    <h1>Graveyard Keeper Planner</h1>
   </header>
 
   <div class="planner-container">
@@ -488,6 +488,7 @@
   }
 
   .planner-container {
+    position:relative;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -533,8 +534,11 @@
     }
 
     .workstation-selector {
-      flex: 0 0 250px;
-      margin-left: 1rem;
+      position:absolute;
+      top:0;
+      bottom:0;
+      right:100%;
+      overflow:auto;
     }
 
     .workyard-container {
