@@ -333,13 +333,29 @@
 <main>
   <header>
     <h1>Graveyard Keeper Workyard Planner</h1>
-    <p>Plan your workyard layout before building it in the game</p>
   </header>
 
   <div class="planner-container">
+    <!-- Workstation Selector (Task #2) - Now a vertical list -->
+    <section class="workstation-selector">
+      <div class="workstation-list">
+        {#each workstations as workstation}
+          <button
+            class="workstation-button"
+            class:active={$selectedWorkstation?.id === workstation.id}
+            on:click={() => selectWorkstation(workstation)}
+          >
+            <div class="info">
+              <div class="name">{workstation.name}</div>
+              <div class="size">{workstation.width}x{workstation.height}</div>
+            </div>
+          </button>
+        {/each}
+      </div>
+    </section>
+
     <!-- Workyard Grid (Task #1) - Now central and largest element -->
     <section class="workyard-container">
-      <h2>Workyard Grid</h2>
       <div 
         class="workyard-grid"
         style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length};"
@@ -443,49 +459,20 @@
         {/if}
       </div>
     </section>
-
-    <!-- Workstation Selector (Task #2) - Now a vertical list -->
-    <section class="workstation-selector">
-      <h2>Available Workstations</h2>
-      <div class="workstation-list">
-        {#each workstations as workstation}
-          <button 
-            class="workstation-button" 
-            class:active={$selectedWorkstation?.id === workstation.id}
-            on:click={() => selectWorkstation(workstation)}
-          >
-            <div class="info">
-              <div class="name">{workstation.name}</div>
-              <div class="size">{workstation.width}x{workstation.height}</div>
-            </div>
-          </button>
-        {/each}
-      </div>
-    </section>
   </div>
-
-  <footer>
-    <p>
-      Instructions: Select a workstation from the list, then click on the grid to place it. 
-      Click on a placed workstation to pick it up and move it. 
-      Press R to rotate. Press Escape to cancel placement or return a workstation to its original position.
-    </p>
-  </footer>
 </main>
 
 <style>
   header, footer {
     text-align: center;
-    padding: 1rem;
   }
 
   .planner-container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem;
   }
 
   @media (min-width: 768px) {
@@ -497,13 +484,11 @@
 
     .workstation-selector {
       flex: 0 0 250px;
-      order: 2; /* Move to the right side */
       margin-left: 1rem;
     }
 
     .workyard-container {
       flex: 1 1 auto;
-      order: 1; /* Move to the left/center */
       max-width: 800px;
     }
   }

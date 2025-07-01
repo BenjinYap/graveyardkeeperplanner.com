@@ -32,7 +32,6 @@ h1 {
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
@@ -111,12 +110,13 @@ button:focus-visible {
 
 .workstation-button .info {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
 }
 
 .workstation-button .name {
   font-weight: bold;
-  margin-bottom: 0.25rem;
 }
 
 .workstation-button .size {
@@ -127,9 +127,8 @@ button:focus-visible {
 /* Workyard grid styles */
 .workyard-container {
   position: relative;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   height:300px;
+  border: 8px solid #7c654a; /* Wooden border */
 }
 
 .workyard-grid {
@@ -142,13 +141,12 @@ button:focus-visible {
   grid-auto-flow: dense;
   /*gap: 2px;*/
   background-color: #5a4d41; /* Dirt color between grid cells */
-  padding: 4px;
+
   width: 100%;
   min-width: 600px;
   max-width: 900px;
-  margin: 1rem auto;
+
   position: relative; /* Important for absolute positioning of children */
-  border: 8px solid #7c654a; /* Wooden border */
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
   aspect-ratio: 1;
   overflow: hidden;
