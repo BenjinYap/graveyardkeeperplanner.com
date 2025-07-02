@@ -29,10 +29,10 @@ This is a **Graveyard Keeper Planner** - a web application for planning workstat
 - Provides auto-save to localStorage with visual notifications
 
 **State Management (`src/stores/index.js`)**:
-- `selectedWorkstation` - Currently selected workstation from sidebar (using $state rune)
-- `placedWorkstations` - Array of workstations placed on grid, persisted to localStorage (using $state rune)
-- `gridState` - 2D array representing grid cells with occupancy and buildable area data (using $state rune)  
-- `ghostState` - Tracks workstation being placed/moved with position and validity (using $state rune)
+- `selectedWorkstation` - Currently selected workstation from sidebar
+- `placedWorkstations` - Array of workstations placed on grid, persisted to localStorage
+- `gridState` - 2D array representing grid cells with occupancy and buildable area data  
+- `ghostState` - Tracks workstation being placed/moved with position and validity
 
 **Models**:
 - `Workstation.js` - Base workstation definition with dimensions and properties
@@ -44,10 +44,14 @@ This is a **Graveyard Keeper Planner** - a web application for planning workstat
 - Creates dynamic grid from area definitions rather than fixed dimensions
 - Areas "b" and "c" are merged into single area "bc" for gameplay purposes
 
+**Components**:
+- `WorkstationSelector.svelte` - Located in `src/lib/`, displays workstation list with thumbnails and search functionality
+
 **Data Management**:
 - `workstations.json` contains all available workstation definitions with images and dimensions
 - Images stored in `src/assets/` with automatic fallback to placeholder
 - Workstation IDs generated from names (lowercase, spaces to underscores)
+- Workstation data processed in `src/data/workstations.js`
 
 ### Key Interactive Features
 
@@ -70,13 +74,10 @@ This is a **Graveyard Keeper Planner** - a web application for planning workstat
 
 ## Development Notes
 
-- The app uses Svelte 5's runes syntax (`$state`, `$derived`, `$effect`) for all reactive state management
 - Grid coordinates are 0-indexed with (0,0) at top-left  
 - Workstation rotation affects effective width/height dimensions
 - Image paths in workstations.json are relative to `src/assets/`
 - Grid areas use absolute positioning within percentage-based responsive grid
-
-## Memory Log
-
-- Code does not appear to use Svelte 5 runes for state management
-- Svelte components are stored in src/lib
+- Svelte components are stored in `src/lib/`
+- State management uses traditional Svelte stores, not Svelte 5 runes syntax
+- Main styling is in `src/app.css` with additional component-scoped styles
