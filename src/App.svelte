@@ -558,27 +558,22 @@
   }
 
   .planner-container {
-    position:relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 120px); /* Full height minus header */
   }
 
+  /* Workstation selector positioned absolutely on the left */
+  .planner-container :global(.workstation-selector) {
+    position: absolute;
+    top: 0;
+    right:100%;
+    z-index: 100
+  }
 
-  @media (min-width: 768px) {
-    .planner-container {
-      flex-direction: row;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-
-    .workyard-container {
-      flex: 1 1 auto;
-      max-width: 800px;
-    }
+  .workyard-container {
+    width: 100%;
+    height: 100%;
   }
 
   h2 {

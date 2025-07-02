@@ -71,8 +71,6 @@
     max-width: 500px;
     background: rgba(139, 69, 19, 0.9);
     border: 3px solid #8B4513;
-    border-radius: 8px;
-    padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(5px);
     height: fit-content;
@@ -111,7 +109,6 @@
     background: rgba(245, 245, 220, 0.9);
     border: 2px solid #654321;
     border-radius: 6px;
-    padding: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
@@ -119,13 +116,11 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    gap: 12px;
   }
 
   .workstation-button:hover {
     background: rgba(255, 255, 255, 0.95);
     border-color: #8B4513;
-    transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
