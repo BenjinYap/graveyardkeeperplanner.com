@@ -4,6 +4,7 @@
   import { createPlacedWorkstation, getEffectiveDimensions } from './models/PlacedWorkstation';
   import WorkstationSelector from './lib/WorkstationSelector.svelte';
   import lawnImage from './assets/lawn.png';
+  import cellBorderImage from './assets/cell_border.png';
 
   // Notification state
   let notificationMessage = '';
@@ -40,20 +41,27 @@
     initializeGrid();
   }
 
-  // Function to check if a cell is on the border of its buildable area
-  function isBorderCell(x, y, cell) {
-    if (!cell.buildable || !cell.area) return false;
+  // Function to get border edges for a cell
+  function getBorderEdges(x, y, cell) {
+    if (!cell.buildable || !cell.area) return null;
     
     const area = cell.area;
     const rows = $gridState.length;
     const cols = $gridState[0].length;
     
-    // Check adjacent cells (4-directional)
+    const borders = {
+      top: false,
+      right: false,
+      bottom: false,
+      left: false
+    };
+    
+    // Check each direction
     const directions = [
-      { dx: -1, dy: 0 }, // left
-      { dx: 1, dy: 0 },  // right
-      { dx: 0, dy: -1 }, // up
-      { dx: 0, dy: 1 }   // down
+      { key: 'top', dx: 0, dy: -1 },
+      { key: 'right', dx: 1, dy: 0 },
+      { key: 'bottom', dx: 0, dy: 1 },
+      { key: 'left', dx: -1, dy: 0 }
     ];
     
     for (const dir of directions) {
@@ -62,16 +70,23 @@
       
       // If we're at the edge of the grid, or adjacent cell is different area/non-buildable
       if (newX < 0 || newX >= cols || newY < 0 || newY >= rows) {
-        return true;
-      }
-      
-      const adjacentCell = $gridState[newY][newX];
-      if (!adjacentCell.buildable || adjacentCell.area !== area) {
-        return true;
+        borders[dir.key] = true;
+      } else {
+        const adjacentCell = $gridState[newY][newX];
+        if (!adjacentCell.buildable || adjacentCell.area !== area) {
+          borders[dir.key] = true;
+        }
       }
     }
     
-    return false;
+    // Return border info if any borders exist
+    const hasBorders = Object.values(borders).some(border => border);
+    return hasBorders ? borders : null;
+  }
+
+  // Helper function to check if a cell has any borders (for class application)
+  function isBorderCell(x, y, cell) {
+    return getBorderEdges(x, y, cell) !== null;
   }
 
   // Initialize the grid with the grid areas data
@@ -424,7 +439,7 @@
     <section class="workyard-container">
       <div 
         class="workyard-grid"
-        style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length}; --lawn-bg: url({lawnImage});"
+        style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length}; --lawn-bg: url({lawnImage}); --border-bg: url({cellBorderImage});"
         on:mousemove={handleGridMouseMove}
         on:mouseleave={handleGridMouseLeave}
         on:click={handleGridClick}
@@ -432,11 +447,16 @@
         <!-- Grid cells -->
         {#each $gridState as row, y}
           {#each row as cell, x}
+            {@const borderEdges = getBorderEdges(x, y, cell)}
             <div 
               class="grid-cell"
               class:occupied={cell.occupied}
               class:buildable={cell.buildable}
-              class:border-cell={isBorderCell(x, y, cell)}
+              class:border-cell={borderEdges !== null}
+              class:border-top={borderEdges?.top}
+              class:border-right={borderEdges?.right}
+              class:border-bottom={borderEdges?.bottom}
+              class:border-left={borderEdges?.left}
               class:area-a={cell.area === 'a'}
               class:area-bc={cell.area === 'bc'}
               class:area-d={cell.area === 'd'}
@@ -754,15 +774,72 @@
     background-color: rgba(0, 0, 0, 0.2); /* Darker overlay when occupied */
   }
 
+  /* Border cells with edge-specific borders using background-image positioning */
   .grid-cell.border-cell {
-    background-image: 
-      linear-gradient(45deg, #FFD700 25%, transparent 25%), 
-      linear-gradient(-45deg, #FFD700 25%, transparent 25%), 
-      linear-gradient(45deg, transparent 75%, #FFD700 75%), 
-      linear-gradient(-45deg, transparent 75%, #FFD700 75%);
-    background-size: 8px 8px;
-    background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
-    background-color: #000000;
+    background-image: var(--border-bg);
+    background-repeat: no-repeat;
+    background-size: 35% 35%;
+  }
+
+  /* Top border */
+  .grid-cell.border-top {
+    background-image: var(--border-bg);
+    background-repeat: repeat-x;
+    background-size: auto 35%;
+    background-position: 0 0;
+  }
+
+  /* Right border */
+  .grid-cell.border-right {
+    background-image: var(--border-bg);
+    background-repeat: repeat-y;
+    background-size: 35% auto;
+    background-position: 100% 0;
+  }
+
+  /* Bottom border */
+  .grid-cell.border-bottom {
+    background-image: var(--border-bg);
+    background-repeat: repeat-x;
+    background-size: auto 35%;
+    background-position: 0 100%;
+  }
+
+  /* Left border */
+  .grid-cell.border-left {
+    background-image: var(--border-bg);
+    background-repeat: repeat-y;
+    background-size: 35% auto;
+    background-position: 0 0;
+  }
+
+  /* Multiple borders - combine background images */
+  .grid-cell.border-top.border-right {
+    background-image: var(--border-bg), var(--border-bg);
+    background-repeat: repeat-x, repeat-y;
+    background-size: auto 35%, 35% auto;
+    background-position: 0 0, 100% 0;
+  }
+
+  .grid-cell.border-top.border-left {
+    background-image: var(--border-bg), var(--border-bg);
+    background-repeat: repeat-x, repeat-y;
+    background-size: auto 35%, 35% auto;
+    background-position: 0 0, 0 0;
+  }
+
+  .grid-cell.border-bottom.border-right {
+    background-image: var(--border-bg), var(--border-bg);
+    background-repeat: repeat-x, repeat-y;
+    background-size: auto 35%, 35% auto;
+    background-position: 0 100%, 100% 0;
+  }
+
+  .grid-cell.border-bottom.border-left {
+    background-image: var(--border-bg), var(--border-bg);
+    background-repeat: repeat-x, repeat-y;
+    background-size: auto 35%, 35% auto;
+    background-position: 0 100%, 0 0;
   }
 
   .grid-coordinates {
