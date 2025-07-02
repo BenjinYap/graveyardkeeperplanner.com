@@ -500,7 +500,15 @@
               <div 
                 class="workstation-clickable-area"
                 on:click|stopPropagation={() => handleWorkstationClick(placed)}
-              ></div>
+              >
+                {#if placed.image}
+                  <img 
+                    src={placed.image} 
+                    alt={placed.name}
+                    class="workstation-image"
+                  />
+                {/if}
+              </div>
               <div class="workstation-name">{placed.name}</div>
             </div>
           </div>
@@ -535,6 +543,13 @@
                 transform-origin: center center;
               "
             >
+              {#if $ghostState.workstation.image}
+                <img 
+                  src={$ghostState.workstation.image} 
+                  alt={$ghostState.workstation.name}
+                  class="workstation-image"
+                />
+              {/if}
               <div class="workstation-name">{$ghostState.workstation.name}</div>
             </div>
           </div>
@@ -711,5 +726,41 @@
 
   .grid-cell.occupied {
     background-color: #777;
+  }
+
+  /* Workstation image styling */
+  .workstation-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  /* Ensure the workstation name is above the image */
+  .workstation-name {
+    position: relative;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-size: 0.8rem;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Ensure the clickable area covers the full workstation */
+  .workstation-clickable-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
   }
 </style>

@@ -1,21 +1,24 @@
 import { createWorkstation } from '../models/Workstation';
 import workstationsData from '../../workstations.json';
+import placeholder from '../assets/placeholder.svg';
 
 /**
  * Workstation data for Graveyard Keeper loaded from workstations.json.
- * As per requirements, we're not using images anymore and displaying names instead.
+ * Using images for workstations that have them, and a placeholder for those that don't.
  */
 export const workstations = workstationsData.map(station => {
   // Generate an ID from the name (lowercase, replace spaces with underscores)
   const id = station.name.toLowerCase().replace(/\s+/g, '_');
+
+  // Use the image path from the JSON data or fallback to placeholder
+  const image = station.image ? new URL(station.image, import.meta.url).href : placeholder;
 
   return createWorkstation({
     id,
     name: station.name,
     width: station.width,
     height: station.height,
-    // No image as per requirements
-    image: null,
+    image,
     // Default to true for canRotate
     canRotate: true
   });
