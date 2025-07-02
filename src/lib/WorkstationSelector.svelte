@@ -16,8 +16,8 @@
     if (workstation) {
       $ghostState = {
         workstation,
-        x: 0,
-        y: 0,
+        x: -1000, // Start off-screen
+        y: -1000,
         rotation: 0,
         isValid: false,
         originalPosition: null
