@@ -61,7 +61,9 @@
 <style>
   /* Workstation Selector Styles */
   .workstation-selector {
-    width: 300px;
+    width: fit-content;
+    min-width: 300px;
+    max-width: 500px;
     background: rgba(139, 69, 19, 0.9);
     border: 3px solid #8B4513;
     border-radius: 8px;
@@ -142,8 +144,6 @@
     color: #2F1B14;
     font-size: 14px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     flex: 1;
     min-width: 0;
   }
