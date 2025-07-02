@@ -440,11 +440,11 @@
     <WorkstationSelector />
 
     <!-- Workyard Grid (Task #1) - Now central and largest element -->
-    <section class="workyard-container">
+    <section class="workyard-container" style="--lawn-bg: url({lawnImage});">
       <div 
         class="workyard-grid"
         class:placing-mode={isPlacingMode}
-        style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length}; --lawn-bg: url({lawnImage}); --border-bg: url({cellBorderImage});"
+        style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length}; --border-bg: url({cellBorderImage});"
         on:mousemove={handleGridMouseMove}
         on:mouseleave={handleGridMouseLeave}
         on:click={handleGridClick}
@@ -565,6 +565,11 @@
 
   .workyard-container {
     width: 100%;
+    padding:10px;
+    /* Tileable lawn background */
+    background-image: var(--lawn-bg);
+    background-repeat: repeat;
+    background-size: contain;
   }
 
   h2 {
@@ -590,14 +595,10 @@
     width: calc(var(--cell-size) * var(--grid-width));
     height: calc(var(--cell-size) * var(--grid-height));
     position: relative; /* Important for absolute positioning of children */
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
     aspect-ratio: 1;
     overflow: hidden;
     
-    /* Tileable lawn background */
-    background-image: var(--lawn-bg);
-    background-repeat: repeat;
-    background-size: contain;
+
   }
 
 
