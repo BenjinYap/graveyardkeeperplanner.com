@@ -131,20 +131,29 @@
 
   .info {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
   }
 
   .name {
     font-weight: bold;
     color: #2F1B14;
     font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
   }
 
   .size {
     color: #654321;
     font-size: 12px;
     font-style: italic;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .no-results {
