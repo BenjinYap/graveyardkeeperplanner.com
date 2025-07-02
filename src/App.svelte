@@ -507,6 +507,7 @@
     display:flex;
     flex-direction: column;
     align-items: center;
+    height:100%;
   }
 
   header, footer {
@@ -559,19 +560,11 @@
 
   .planner-container {
     position: relative;
-  }
-
-  /* Workstation selector positioned absolutely on the left */
-  .planner-container :global(.workstation-selector) {
-    position: absolute;
-    top: 0;
-    right:100%;
-    z-index: 100
+    flex: 1;
   }
 
   .workyard-container {
     width: 100%;
-    height: 100%;
   }
 
   h2 {
@@ -584,7 +577,6 @@
   /* Workyard grid styles */
   .workyard-container {
     position: relative;
-    height: 100%;
     border: 8px solid #7c654a; /* Wooden border */
   }
 

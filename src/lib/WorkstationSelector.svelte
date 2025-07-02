@@ -74,20 +74,20 @@
 <style>
   /* Workstation Selector Styles */
   .workstation-selector {
-    width: fit-content;
-    min-width: 300px;
-    max-width: 500px;
     background: rgba(139, 69, 19, 0.9);
     border: 3px solid #8B4513;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(5px);
-    height: fit-content;
-    max-height: 80vh;
     overflow-y: auto;
+    position: absolute;
+    top: 0;
+    bottom: 20px;
+    right:100%;
+    z-index: 100
   }
 
   .search-container {
-    margin-bottom: 15px;
+
   }
 
   .search-input {
@@ -110,28 +110,24 @@
   .workstation-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
   }
 
   .workstation-item {
     background: rgba(245, 245, 220, 0.9);
     border: 2px solid #654321;
     border-radius: 6px;
-    padding: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
     text-align: left;
     width: 100%;
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 4px;
   }
 
   .workstation-item:hover {
     background: rgba(255, 255, 255, 0.95);
     border-color: #8B4513;
-    transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
@@ -151,7 +147,6 @@
     object-fit: contain;
     flex-shrink: 0;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.8);
     padding: 2px;
   }
 
@@ -175,7 +170,6 @@
   .size {
     color: #654321;
     font-size: 12px;
-    font-style: italic;
     white-space: nowrap;
     flex-shrink: 0;
   }
