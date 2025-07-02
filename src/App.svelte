@@ -89,6 +89,9 @@
     return getBorderEdges(x, y, cell) !== null;
   }
 
+  // Derived value to check if we're in placing mode
+  $: isPlacingMode = $ghostState.workstation !== null;
+
   // Initialize the grid with the grid areas data
   onMount(() => {
     initializeGrid(); // Uses grid_areas.json by default
@@ -439,6 +442,7 @@
     <section class="workyard-container">
       <div 
         class="workyard-grid"
+        class:placing-mode={isPlacingMode}
         style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length}; --lawn-bg: url({lawnImage}); --border-bg: url({cellBorderImage});"
         on:mousemove={handleGridMouseMove}
         on:mouseleave={handleGridMouseLeave}
@@ -451,6 +455,7 @@
             <div 
               class="grid-cell"
               class:occupied={cell.occupied}
+              class:buildable={cell.buildable}
               class:border-cell={borderEdges !== null}
               class:border-top={borderEdges?.top}
               class:border-right={borderEdges?.right}
@@ -699,14 +704,15 @@
     background-color: transparent; /* Let the grid background show through */
     aspect-ratio: 1;
     position: relative;
-    border: 1px solid rgba(107, 88, 66, 0.3); /* Subtle border for cell definition */
-    transition: background-color 0.2s ease;
+    border: 1px solid transparent; /* Hidden by default */
     z-index: 1;
   }
 
-  .grid-cell:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Light overlay on hover */
+  /* Show prominent grid lines in buildable areas when in placing mode */
+  .workyard-grid.placing-mode .grid-cell.buildable {
+    border: 1px solid rgb(71 47 3 / 60%); /* Prominent white lines */
   }
+
 
   .grid-cell.occupied {
     background-color: rgba(0, 0, 0, 0.2); /* Darker overlay when occupied */
