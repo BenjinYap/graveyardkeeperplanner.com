@@ -1,14 +1,8 @@
 <script>
   import { onMount } from 'svelte';
-  import { workstations } from './data/workstations';
   import { selectedWorkstation, placedWorkstations, gridState, ghostState, initializeGrid, savePlacedWorkstations } from './stores';
   import { createPlacedWorkstation, getEffectiveDimensions } from './models/PlacedWorkstation';
-
-  // Search functionality
-  let searchTerm = '';
-  $: filteredWorkstations = workstations.filter(workstation => 
-    workstation.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  import WorkstationSelector from './lib/WorkstationSelector.svelte';
 
   // Notification state
   let notificationMessage = '';
@@ -74,22 +68,6 @@
     };
   });
 
-  // Handle workstation selection
-  function selectWorkstation(workstation) {
-    $selectedWorkstation = workstation;
-
-    // Initialize ghost state when a workstation is selected
-    if (workstation) {
-      $ghostState = {
-        workstation,
-        x: 0,
-        y: 0,
-        rotation: 0,
-        isValid: false,
-        originalPosition: null
-      };
-    }
-  }
 
   // Handle mouse movement over the grid
   function handleGridMouseMove(event) {
@@ -404,42 +382,8 @@
   </header>
 
   <div class="planner-container">
-    <!-- Workstation Selector (Task #2) - Now a vertical list -->
-    <section class="workstation-selector">
-      <!-- Search bar -->
-      <div class="search-container">
-        <input 
-          type="text" 
-          placeholder="Search workstations..." 
-          bind:value={searchTerm}
-          class="search-input"
-        />
-      </div>
-
-      <div class="workstation-list">
-        {#if filteredWorkstations.length === 0}
-          <div class="no-results">No workstations found</div>
-        {:else}
-          {#each filteredWorkstations as workstation}
-            <button
-              class="workstation-button"
-              class:active={$selectedWorkstation?.id === workstation.id}
-              on:click={() => selectWorkstation(workstation)}
-            >
-              <img 
-                src={workstation.image} 
-                alt={workstation.name}
-                class="workstation-thumbnail"
-              />
-              <div class="info">
-                <div class="name">{workstation.name}</div>
-                <div class="size">{workstation.width}x{workstation.height}</div>
-              </div>
-            </button>
-          {/each}
-        {/if}
-      </div>
-    </section>
+    <!-- Workstation Selector (Task #2) - Now a separate component -->
+    <WorkstationSelector />
 
     <!-- Workyard Grid (Task #1) - Now central and largest element -->
     <section class="workyard-container">
@@ -622,35 +566,6 @@
     margin: 0 auto;
   }
 
-  /* Search bar styles */
-  .search-container {
-    margin-bottom: 1rem;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    background-color: #f5f5f5;
-  }
-
-  .search-input:focus {
-    outline: none;
-    border-color: #646cff;
-    box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.2);
-  }
-
-  .no-results {
-    padding: 1rem;
-    text-align: center;
-    color: #666;
-    font-style: italic;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-    margin-top: 0.5rem;
-  }
 
   @media (min-width: 768px) {
     .planner-container {
@@ -659,13 +574,6 @@
       align-items: flex-start;
     }
 
-    .workstation-selector {
-      position:absolute;
-      top:0;
-      bottom:0;
-      right:100%;
-      overflow:auto;
-    }
 
     .workyard-container {
       flex: 1 1 auto;
@@ -677,10 +585,6 @@
     margin-bottom: 1rem;
   }
 
-  .workstation-button.active {
-    border-color: #646cff;
-    background-color: rgba(100, 108, 255, 0.1);
-  }
 
   /* Grid cell styling */
   .grid-cell {
