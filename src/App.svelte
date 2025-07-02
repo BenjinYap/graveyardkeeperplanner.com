@@ -794,7 +794,6 @@
     justify-content: center;
     z-index: 5;
     box-sizing: border-box;
-    transition: all 0.2s ease;
   }
 
   .workstation-content {
@@ -807,8 +806,8 @@
 
   /* Enhanced hover effect */
   .placed-workstation:hover {
+    background-color: rgba(0, 0, 0, 0.2);
     z-index: 6;
-    transition: all 0.2s ease;
   }
 
   .placed-workstation:hover .workstation-content {
