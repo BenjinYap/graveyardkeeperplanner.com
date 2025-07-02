@@ -426,6 +426,11 @@
               class:active={$selectedWorkstation?.id === workstation.id}
               on:click={() => selectWorkstation(workstation)}
             >
+              <img 
+                src={workstation.image} 
+                alt={workstation.name}
+                class="workstation-thumbnail"
+              />
               <div class="info">
                 <div class="name">{workstation.name}</div>
                 <div class="size">{workstation.width}x{workstation.height}</div>

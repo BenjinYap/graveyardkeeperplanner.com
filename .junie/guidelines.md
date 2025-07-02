@@ -73,3 +73,7 @@ npm run build
 
 ## Agent Guidelines
 * If you are missing any information such as location grid sizes or workstation sizes, try and retrieve it yourself before asking me.
+* Never run `npm run dev`.
+* Workstation images are located in `src/assets`.
+* Workstation data is stored in `workstations.json`.
+  * This also contains the image that is associated with each station.
