@@ -795,8 +795,6 @@
     z-index: 5;
     box-sizing: border-box;
     transition: all 0.2s ease;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   .workstation-content {
@@ -809,8 +807,6 @@
 
   /* Enhanced hover effect */
   .placed-workstation:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(100, 200, 255, 0.8);
-    border: 2px solid rgba(100, 200, 255, 0.9);
     z-index: 6;
     transition: all 0.2s ease;
   }
@@ -876,15 +872,11 @@
   }
 
   .workstation-ghost.valid {
-    background-color: rgba(0, 255, 0, 0.9);
-    border: 2px solid rgba(0, 255, 0, 0.9);
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    background-color: rgba(0, 255, 0, 0.4);
   }
 
   .workstation-ghost.invalid {
-    background-color: rgba(255, 0, 0, 0.9);
-    border: 2px solid rgba(255, 0, 0, 0.9);
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    background-color: rgba(255, 0, 0, 0.4);
   }
 
   .rotation-indicator {
@@ -921,9 +913,6 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
   }
 
-  .workstation-ghost.moving {
-    border-style: dashed;
-  }
 
   .debug-info {
     position: absolute;
