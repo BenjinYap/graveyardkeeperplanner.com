@@ -3,6 +3,7 @@
   import { selectedWorkstation, placedWorkstations, gridState, ghostState, initializeGrid, savePlacedWorkstations } from './stores';
   import { createPlacedWorkstation, getEffectiveDimensions } from './models/PlacedWorkstation';
   import WorkstationSelector from './lib/WorkstationSelector.svelte';
+  import WorkstationDisplay from './lib/WorkstationDisplay.svelte';
   import lawnImage from './assets/lawn.png';
   import cellBorderImage from './assets/cell_border.png';
 
@@ -469,87 +470,32 @@
           {/each}
         {/each}
 
-        <!-- Placed Workstations (Task #3) - Absolutely positioned -->
+        <!-- Placed Workstations -->
         {#each $placedWorkstations as placed}
-          {@const effectiveDimensions = getEffectiveDimensions(placed)}
-          <div 
-            class="placed-workstation"
-            style="
-              position: absolute;
-              left: calc({placed.x} * (100% / var(--grid-cols)));
-              top: calc({placed.y} * (100% / var(--grid-rows)));
-              width: calc({effectiveDimensions.width} * (100% / var(--grid-cols)));
-              height: calc({effectiveDimensions.height} * (100% / var(--grid-rows)));
-            "
-          >
-            <div 
-              class="workstation-content"
-              style="
-                width: 100%;
-                height: 100%;
-                transform: rotate({placed.rotation}deg);
-                transform-origin: center center;
-              "
-            >
-              <!-- Clickable area that excludes the name -->
-              <div 
-                class="workstation-clickable-area"
-                on:click|stopPropagation={() => handleWorkstationClick(placed)}
-              >
-                {#if placed.image}
-                  <img 
-                    src={placed.image} 
-                    alt={placed.name}
-                    class="workstation-image"
-                  />
-                {/if}
-              </div>
-              <div class="workstation-name">{placed.name}</div>
-            </div>
-          </div>
+          <WorkstationDisplay
+            workstation={placed}
+            x={placed.x}
+            y={placed.y}
+            rotation={placed.rotation}
+            width={placed.width}
+            height={placed.height}
+            onClick={() => handleWorkstationClick(placed)}
+          />
         {/each}
 
-        <!-- Ghost Workstation (for placement preview) - Absolutely positioned -->
+        <!-- Ghost Workstation (placement preview) -->
         {#if $ghostState.workstation && $ghostState.x >= 0 && $ghostState.y >= 0}
-          {@const effectiveDimensions = getEffectiveDimensions({
-            width: $ghostState.workstation.width,
-            height: $ghostState.workstation.height,
-            rotation: $ghostState.rotation
-          })}
-          <div 
-            class="placed-workstation workstation-ghost"
-            class:valid={$ghostState.isValid}
-            class:invalid={!$ghostState.isValid}
-            class:moving={$ghostState.originalPosition !== null}
-            style="
-              position: absolute;
-              left: calc({$ghostState.x} * (100% / var(--grid-cols)));
-              top: calc({$ghostState.y} * (100% / var(--grid-rows)));
-              width: calc({effectiveDimensions.width} * (100% / var(--grid-cols)));
-              height: calc({effectiveDimensions.height} * (100% / var(--grid-rows)));
-            "
-          >
-            <div 
-              class="workstation-content"
-              style="
-                width: 100%;
-                height: 100%;
-                transform: rotate({$ghostState.rotation}deg);
-                transform-origin: center center;
-              "
-            >
-              <div class="workstation-clickable-area">
-                {#if $ghostState.workstation.image}
-                  <img 
-                    src={$ghostState.workstation.image} 
-                    alt={$ghostState.workstation.name}
-                    class="workstation-image"
-                  />
-                {/if}
-              </div>
-              <div class="workstation-name">{$ghostState.workstation.name}</div>
-            </div>
-          </div>
+          <WorkstationDisplay
+            workstation={$ghostState.workstation}
+            x={$ghostState.x}
+            y={$ghostState.y}
+            rotation={$ghostState.rotation}
+            width={$ghostState.workstation.width}
+            height={$ghostState.workstation.height}
+            isGhost={true}
+            isValid={$ghostState.isValid}
+            isMoving={$ghostState.originalPosition !== null}
+          />
         {/if}
       </div>
     </section>
@@ -634,43 +580,6 @@
 
 
 
-  /* Workstation image styling */
-  .workstation-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-  }
-
-  /* Ensure the workstation name is above the image */
-  .workstation-name {
-    position: relative;
-    z-index: 2;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 2px 4px;
-    border-radius: 2px;
-    font-size: 0.8rem;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Ensure the clickable area covers the full workstation */
-  .workstation-clickable-area {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 5;
-    cursor: pointer;
-    background-color: transparent;
-  }
 
   /* Workyard grid styles */
   .workyard-container {
@@ -787,74 +696,6 @@
   }
 
 
-  /* Placed workstation styles */
-  .placed-workstation {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
-    box-sizing: border-box;
-  }
-
-  .workstation-content {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-  }
-
-  /* Enhanced hover effect - only for actual placed workstations, not ghosts */
-  .placed-workstation:hover:not(.workstation-ghost) {
-    background-color: rgba(0, 0, 0, 0.2);
-    z-index: 6;
-  }
-
-  .placed-workstation:hover:not(.workstation-ghost) .workstation-content {
-    transform: scale(1.05);
-  }
-
-  .placed-workstation .workstation-name {
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.8rem;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    z-index: 7;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-
-  .placed-workstation:hover .workstation-name {
-    opacity: 1;
-  }
-
-  /* Ghost-specific overrides */
-  .workstation-ghost {
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  .workstation-ghost .workstation-name {
-    opacity: 1; /* Always show name for ghosts */
-  }
-
-  .workstation-ghost.valid {
-    background-color: rgba(0, 255, 0, 0.4);
-  }
-
-  .workstation-ghost.invalid {
-    background-color: rgba(255, 0, 0, 0.4);
-  }
 
   .rotation-indicator {
     position: absolute;
