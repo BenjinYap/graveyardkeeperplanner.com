@@ -509,6 +509,12 @@
 </main>
 
 <style>
+  main {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   header, footer {
     text-align: center;
   }
@@ -559,8 +565,6 @@
 
   .planner-container {
     position: relative;
-    width: 100%;
-    height: calc(100vh - 120px); /* Full height minus header */
   }
 
   /* Workstation selector positioned absolutely on the left */
@@ -585,6 +589,8 @@
   .grid-cell {
     background-color: #333; /* Default color for non-buildable areas */
     border: 1px solid #444;
+    width:var(--cell-size);
+    height:var(--cell-size);
   }
 
   .grid-cell.buildable {
@@ -665,6 +671,236 @@
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 5;
+    cursor: pointer;
+    background-color: transparent;
+  }
+
+  /* Workyard grid styles */
+  .workyard-container {
+    position: relative;
+    height: 100%;
+    border: 8px solid #7c654a; /* Wooden border */
+  }
+
+  .workyard-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols, 10), minmax(0, 1fr));
+    grid-template-rows: repeat(var(--grid-rows, 10), minmax(0, 1fr));
+    grid-auto-columns: 0;
+    grid-auto-rows: 0;
+    grid-auto-flow: dense;
+    background-color: #5a4d41; /* Dirt color between grid cells */
+    width: calc(var(--cell-size) * var(--grid-width));
+    height: calc(var(--cell-size) * var(--grid-height));
+    position: relative; /* Important for absolute positioning of children */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .grid-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%235a4d41"/><circle cx="25" cy="25" r="2" fill="%23483e35"/><circle cx="75" cy="25" r="2" fill="%23483e35"/><circle cx="25" cy="75" r="2" fill="%23483e35"/><circle cx="75" cy="75" r="2" fill="%23483e35"/><circle cx="50" cy="50" r="3" fill="%23483e35"/></svg>');
+    background-size: 20px 20px;
+    opacity: 0.5;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .grid-cell {
+    background-color: #8b7355; /* Dirt/soil color */
+    aspect-ratio: 1;
+    position: relative;
+    border: 1px solid #6b5842; /* Darker border for cell definition */
+    transition: background-color 0.2s ease;
     z-index: 1;
+  }
+
+  .grid-cell:hover {
+    background-color: #9c8565; /* Lighter on hover */
+  }
+
+  .grid-cell.occupied {
+    background-color: #7a6548; /* Slightly darker when occupied */
+  }
+
+  .grid-coordinates {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    display: none; /* Hidden by default, enable for debugging */
+  }
+
+  /* Placed workstation styles */
+  .placed-workstation {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .workstation-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  /* Enhanced hover effect */
+  .placed-workstation:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(100, 200, 255, 0.8);
+    border: 2px solid rgba(100, 200, 255, 0.9);
+    z-index: 6;
+    transition: all 0.2s ease;
+  }
+
+  .placed-workstation:hover .workstation-content {
+    transform: scale(1.05);
+  }
+
+  .placed-workstation .name {
+    position: absolute;
+    bottom: -25px;
+    font-size: 0.8rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    z-index: 7;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .placed-workstation:hover .name {
+    opacity: 1;
+  }
+
+  /* Ghost styles */
+  .workstation-ghost {
+    position: absolute;
+    pointer-events: none;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .ghost-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .workstation-ghost .workstation-name {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    padding: 1rem;
+    width: 90%;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    transform: rotate(0deg) !important;
+  }
+
+  .workstation-ghost.valid {
+    background-color: rgba(0, 255, 0, 0.9);
+    border: 2px solid rgba(0, 255, 0, 0.9);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  }
+
+  .workstation-ghost.invalid {
+    background-color: rgba(255, 0, 0, 0.9);
+    border: 2px solid rgba(255, 0, 0, 0.9);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+  }
+
+  .rotation-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+    transform: rotate(0deg) !important;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .moving-indicator {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    z-index: 20;
+    transform: rotate(0deg) !important;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .workstation-ghost.moving {
+    border-style: dashed;
+  }
+
+  .debug-info {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 10px;
+    z-index: 20;
+    transform: rotate(0deg) !important;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+  }
+
+  @keyframes moving-glow {
+    0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.6); }
+    100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
   }
 </style>
