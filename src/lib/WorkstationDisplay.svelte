@@ -26,6 +26,9 @@
   export let onClick = () => {};
 
   import { getEffectiveDimensions } from '../models/PlacedWorkstation';
+  
+  // Create unique identifier for this component instance
+  const componentId = `${isGhost ? 'ghost' : 'placed'}-${workstation.id || workstation.name}-${Math.random().toString(36).substr(2, 9)}`;
 
   let workstationElement;
   let tooltipElement;
@@ -47,6 +50,12 @@
     
     tooltipElement.style.left = `${centerX}px`;
     tooltipElement.style.top = `${topY}px`;
+    tooltipElement.style.opacity = '1'; // Make visible after positioning
+  }
+
+  // Always start tooltip off-screen to prevent flickering
+  function getInitialTooltipStyle() {
+    return 'left: -9999px; top: -9999px; opacity: 0;';
   }
 
   function handleMouseEnter() {
@@ -57,6 +66,12 @@
   function handleMouseLeave() {
     isHovered = false;
   }
+
+  // Cleanup on component destruction
+  import { onDestroy } from 'svelte';
+  onDestroy(() => {
+    isHovered = false; // Ensure tooltip is hidden when component is destroyed
+  });
 </script>
 
 <div 
@@ -87,7 +102,11 @@
   >
     <div 
       class="workstation-clickable-area"
-      on:click|stopPropagation={onClick}
+      on:click|stopPropagation={(e) => {
+        // Hide tooltip immediately when clicked to prevent flashing
+        isHovered = false;
+        onClick(e);
+      }}
       role={isGhost ? "none" : "button"}
       tabindex={isGhost ? -1 : 0}
     >
@@ -104,13 +123,16 @@
 </div>
 
 <!-- Fixed tooltip that appears above everything -->
-<div 
-  bind:this={tooltipElement}
-  class="workstation-tooltip"
-  class:visible={isHovered}
->
-  {workstation.name}
-</div>
+{#if isHovered}
+  <div 
+    bind:this={tooltipElement}
+    class="workstation-tooltip visible"
+    data-component-id={componentId}
+    style="{getInitialTooltipStyle()}"
+  >
+    {workstation.name}
+  </div>
+{/if}
 
 <style>
   /* Base workstation styles */
@@ -168,7 +190,7 @@
   }
 
   .workstation-tooltip.visible {
-    opacity: 1;
+    /* Opacity controlled by JavaScript to prevent flickering */
   }
 
   /* Ghost-specific overrides */
