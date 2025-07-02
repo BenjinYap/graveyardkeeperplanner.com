@@ -218,6 +218,11 @@
     left: 0;
     z-index: 1;
   }
+  
+  /* Drop shadow that follows the image shape - only for placed workstations */
+  .placed-workstation:not(.workstation-ghost) .workstation-image {
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 1));
+  }
 
   /* Ensure the clickable area covers the full workstation */
   .workstation-clickable-area {
