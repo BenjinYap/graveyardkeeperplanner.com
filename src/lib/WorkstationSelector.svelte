@@ -48,6 +48,11 @@
           class:active={$selectedWorkstation?.id === workstation.id}
           on:click={() => selectWorkstation(workstation)}
         >
+          <img 
+            src={workstation.image} 
+            alt={workstation.name}
+            class="thumbnail"
+          />
           <div class="info">
             <div class="name">{workstation.name}</div>
             <div class="size">{workstation.width}x{workstation.height}</div>
@@ -112,6 +117,9 @@
     text-align: left;
     width: 100%;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
   .workstation-button:hover {
@@ -129,6 +137,16 @@
 
   .workstation-button.active:hover {
     background: rgba(255, 215, 0, 1);
+  }
+
+  .thumbnail {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px;
   }
 
   .info {
