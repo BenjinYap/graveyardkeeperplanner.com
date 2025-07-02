@@ -814,16 +814,17 @@
     transform: scale(1.05);
   }
 
-  .placed-workstation .name {
+  .placed-workstation .workstation-name {
     position: absolute;
-    bottom: -25px;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
     font-size: 0.8rem;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 3px 8px;
+    padding: 4px 8px;
     border-radius: 4px;
     white-space: nowrap;
-    transform: translateY(0) !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     z-index: 7;
     pointer-events: none;
@@ -831,7 +832,7 @@
     transition: opacity 0.2s ease;
   }
 
-  .placed-workstation:hover .name {
+  .placed-workstation:hover .workstation-name {
     opacity: 1;
   }
 
@@ -855,19 +856,20 @@
   }
 
   .workstation-ghost .workstation-name {
-    font-size: 1rem;
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
     font-weight: bold;
-    text-align: center;
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 1rem;
-    width: 90%;
-    height: 90%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.8;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    transform: rotate(0deg) !important;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    z-index: 11;
+    pointer-events: none;
   }
 
   .workstation-ghost.valid {
