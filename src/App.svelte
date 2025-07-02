@@ -38,15 +38,11 @@
 
   // Function to clear the layout
   function clearLayout() {
-    if (confirm('Are you sure you want to clear the layout? This cannot be undone.')) {
-      // Clear all placed workstations
-      $placedWorkstations = [];
+    // Clear all placed workstations
+    $placedWorkstations = [];
 
-      // Reset the grid state
-      initializeGrid();
-
-      showNotificationMessage('Layout cleared!');
-    }
+    // Reset the grid state
+    initializeGrid();
   }
 
   // Initialize the grid with the grid areas data
