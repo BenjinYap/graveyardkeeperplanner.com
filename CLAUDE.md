@@ -75,3 +75,8 @@ This is a **Graveyard Keeper Planner** - a web application for planning workstat
 - Workstation rotation affects effective width/height dimensions
 - Image paths in workstations.json are relative to `src/assets/`
 - Grid areas use absolute positioning within percentage-based responsive grid
+
+## Memory Log
+
+- Code does not appear to use Svelte 5 runes for state management
+- Svelte components are stored in src/lib
