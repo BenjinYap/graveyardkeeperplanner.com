@@ -517,7 +517,7 @@
             rotation: $ghostState.rotation
           })}
           <div 
-            class="workstation-ghost"
+            class="placed-workstation workstation-ghost"
             class:valid={$ghostState.isValid}
             class:invalid={!$ghostState.isValid}
             class:moving={$ghostState.originalPosition !== null}
@@ -530,7 +530,7 @@
             "
           >
             <div 
-              class="ghost-content"
+              class="workstation-content"
               style="
                 width: 100%;
                 height: 100%;
@@ -538,13 +538,15 @@
                 transform-origin: center center;
               "
             >
-              {#if $ghostState.workstation.image}
-                <img 
-                  src={$ghostState.workstation.image} 
-                  alt={$ghostState.workstation.name}
-                  class="workstation-image"
-                />
-              {/if}
+              <div class="workstation-clickable-area">
+                {#if $ghostState.workstation.image}
+                  <img 
+                    src={$ghostState.workstation.image} 
+                    alt={$ghostState.workstation.name}
+                    class="workstation-image"
+                  />
+                {/if}
+              </div>
               <div class="workstation-name">{$ghostState.workstation.name}</div>
             </div>
           </div>
@@ -804,13 +806,13 @@
     box-sizing: border-box;
   }
 
-  /* Enhanced hover effect */
-  .placed-workstation:hover {
+  /* Enhanced hover effect - only for actual placed workstations, not ghosts */
+  .placed-workstation:hover:not(.workstation-ghost) {
     background-color: rgba(0, 0, 0, 0.2);
     z-index: 6;
   }
 
-  .placed-workstation:hover .workstation-content {
+  .placed-workstation:hover:not(.workstation-ghost) .workstation-content {
     transform: scale(1.05);
   }
 
@@ -836,40 +838,14 @@
     opacity: 1;
   }
 
-  /* Ghost styles */
+  /* Ghost-specific overrides */
   .workstation-ghost {
-    position: absolute;
     pointer-events: none;
     z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-  }
-
-  .ghost-content {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
   }
 
   .workstation-ghost .workstation-name {
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.8rem;
-    font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    z-index: 11;
-    pointer-events: none;
+    opacity: 1; /* Always show name for ghosts */
   }
 
   .workstation-ghost.valid {
