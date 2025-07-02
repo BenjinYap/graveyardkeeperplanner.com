@@ -3,6 +3,7 @@
   import { selectedWorkstation, placedWorkstations, gridState, ghostState, initializeGrid, savePlacedWorkstations } from './stores';
   import { createPlacedWorkstation, getEffectiveDimensions } from './models/PlacedWorkstation';
   import WorkstationSelector from './lib/WorkstationSelector.svelte';
+  import lawnImage from './assets/lawn.png';
 
   // Notification state
   let notificationMessage = '';
@@ -423,14 +424,11 @@
     <section class="workyard-container">
       <div 
         class="workyard-grid"
-        style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length};"
+        style="--grid-cols: {$gridState[0]?.length}; --grid-rows: {$gridState.length}; --lawn-bg: url({lawnImage});"
         on:mousemove={handleGridMouseMove}
         on:mouseleave={handleGridMouseLeave}
         on:click={handleGridClick}
       >
-        <!-- Grid background with texture -->
-        <div class="grid-background"></div>
-
         <!-- Grid cells -->
         {#each $gridState as row, y}
           {#each row as cell, x}
@@ -725,43 +723,35 @@
     grid-auto-columns: 0;
     grid-auto-rows: 0;
     grid-auto-flow: dense;
-    background-color: #5a4d41; /* Dirt color between grid cells */
     width: calc(var(--cell-size) * var(--grid-width));
     height: calc(var(--cell-size) * var(--grid-height));
     position: relative; /* Important for absolute positioning of children */
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
     aspect-ratio: 1;
     overflow: hidden;
+    
+    /* Tileable lawn background */
+    background-image: var(--lawn-bg);
+    background-repeat: repeat;
+    background-size: contain;
   }
 
-  .grid-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%235a4d41"/><circle cx="25" cy="25" r="2" fill="%23483e35"/><circle cx="75" cy="25" r="2" fill="%23483e35"/><circle cx="25" cy="75" r="2" fill="%23483e35"/><circle cx="75" cy="75" r="2" fill="%23483e35"/><circle cx="50" cy="50" r="3" fill="%23483e35"/></svg>');
-    background-size: 20px 20px;
-    opacity: 0.5;
-    z-index: 0;
-    pointer-events: none;
-  }
 
   .grid-cell {
-    background-color: #8b7355; /* Dirt/soil color */
+    background-color: transparent; /* Let the grid background show through */
     aspect-ratio: 1;
     position: relative;
-    border: 1px solid #6b5842; /* Darker border for cell definition */
+    border: 1px solid rgba(107, 88, 66, 0.3); /* Subtle border for cell definition */
     transition: background-color 0.2s ease;
     z-index: 1;
   }
 
   .grid-cell:hover {
-    background-color: #9c8565; /* Lighter on hover */
+    background-color: rgba(255, 255, 255, 0.1); /* Light overlay on hover */
   }
 
   .grid-cell.occupied {
-    background-color: #7a6548; /* Slightly darker when occupied */
+    background-color: rgba(0, 0, 0, 0.2); /* Darker overlay when occupied */
   }
 
   .grid-cell.border-cell {
