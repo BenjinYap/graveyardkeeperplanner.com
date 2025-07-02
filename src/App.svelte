@@ -35,12 +35,6 @@
     }, 2000);
   }
 
-  // Function to manually save the current layout
-  function saveLayout() {
-    if (savePlacedWorkstations($placedWorkstations)) {
-      showNotificationMessage('Layout saved!');
-    }
-  }
 
   // Function to clear the layout
   function clearLayout() {
@@ -59,6 +53,11 @@
   onMount(() => {
     initializeGrid(); // Uses grid_areas.json by default
 
+    // Update grid occupancy for workstations loaded from localStorage
+    $placedWorkstations.forEach(workstation => {
+      updateGridOccupancy(workstation, true);
+    });
+
     // Add keyboard event listener for rotation
     window.addEventListener('keydown', handleKeyDown);
 
@@ -67,19 +66,6 @@
       // Only save if there are workstations or if we're clearing them intentionally
       if (workstations.length > 0 || document.readyState === 'complete') {
         savePlacedWorkstations(workstations);
-
-        // Don't show auto-save notification during initial load
-        if (document.readyState === 'complete' && 
-            // Avoid showing notification for programmatic changes (like clear)
-            !showNotification) {
-
-          const now = Date.now();
-          // Only show notification if enough time has passed since the last one
-          if (now - lastAutoSaveTime > AUTO_SAVE_DEBOUNCE_MS) {
-            showNotificationMessage('Layout auto-saved');
-            lastAutoSaveTime = now;
-          }
-        }
       }
     });
 
@@ -411,9 +397,6 @@
     <div class="header-content">
       <h1>Graveyard Keeper Planner</h1>
       <div class="header-controls">
-        <button class="save-button" on:click={saveLayout}>
-          Save Layout
-        </button>
         <button class="clear-button" on:click={clearLayout}>
           Clear Layout
         </button>
@@ -585,20 +568,6 @@
     gap: 1rem;
   }
 
-  .save-button {
-    padding: 0.5rem 1rem;
-    background-color: #646cff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
-  }
-
-  .save-button:hover {
-    background-color: #535bf2;
-  }
 
   .clear-button {
     padding: 0.5rem 1rem;
