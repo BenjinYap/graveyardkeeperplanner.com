@@ -596,8 +596,6 @@
     height: calc(var(--cell-size) * var(--grid-height));
     position: relative; /* Important for absolute positioning of children */
     aspect-ratio: 1;
-    overflow: hidden;
-    
 
   }
 
@@ -615,72 +613,189 @@
     border: 1px solid rgb(71 47 3 / 60%); /* Prominent white lines */
   }
 
-  /* Border cells with edge-specific borders using background-image positioning */
+  /* Border cells with edge-specific borders using pseudo-elements positioned outside the cell */
   .grid-cell.border-cell {
-    background-image: var(--border-bg);
-    background-repeat: no-repeat;
-    background-size: 35% 35%;
+    position: relative;
   }
 
   /* Top border */
-  .grid-cell.border-top {
+  .grid-cell.border-top::before {
+    content: '';
+    position: absolute;
+    top: -35%;
+    left: 0;
+    right: 0;
+    height: 35%;
     background-image: var(--border-bg);
     background-repeat: repeat-x;
-    background-size: auto 35%;
-    background-position: 0 0;
+    background-size: auto 100%;
+    z-index: 10;
+    pointer-events: none;
   }
 
   /* Right border */
-  .grid-cell.border-right {
+  .grid-cell.border-right::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -35%;
+    bottom: 0;
+    width: 35%;
     background-image: var(--border-bg);
     background-repeat: repeat-y;
-    background-size: 35% auto;
-    background-position: 100% 0;
+    background-size: 100% auto;
+    z-index: 10;
+    pointer-events: none;
   }
 
   /* Bottom border */
-  .grid-cell.border-bottom {
+  .grid-cell.border-bottom::after {
+    content: '';
+    position: absolute;
+    bottom: -35%;
+    left: 0;
+    right: 0;
+    height: 35%;
     background-image: var(--border-bg);
     background-repeat: repeat-x;
-    background-size: auto 35%;
-    background-position: 0 100%;
+    background-size: auto 100%;
+    z-index: 10;
+    pointer-events: none;
   }
 
   /* Left border */
-  .grid-cell.border-left {
+  .grid-cell.border-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -35%;
+    bottom: 0;
+    width: 35%;
     background-image: var(--border-bg);
     background-repeat: repeat-y;
-    background-size: 35% auto;
-    background-position: 0 0;
+    background-size: 100% auto;
+    z-index: 10;
+    pointer-events: none;
   }
 
-  /* Multiple borders - combine background images */
-  .grid-cell.border-top.border-right {
-    background-image: var(--border-bg), var(--border-bg);
-    background-repeat: repeat-x, repeat-y;
-    background-size: auto 35%, 35% auto;
-    background-position: 0 0, 100% 0;
+  /* Handle conflicts for multiple borders - need to create additional pseudo-elements */
+  
+  /* For cells with left border, we need to use a different approach to avoid conflicts */
+  .grid-cell.border-left:not(.border-top):not(.border-bottom)::before {
+    /* Only apply this when left is the only vertical border */
+    top: 0;
+    left: -35%;
+    bottom: 0;
+    width: 35%;
+    background-repeat: repeat-y;
+    background-size: 100% auto;
   }
 
-  .grid-cell.border-top.border-left {
-    background-image: var(--border-bg), var(--border-bg);
-    background-repeat: repeat-x, repeat-y;
-    background-size: auto 35%, 35% auto;
-    background-position: 0 0, 0 0;
+  /* For cells with both top and left borders */
+  .grid-cell.border-top.border-left::before {
+    /* Top border gets ::before */
+    top: -35%;
+    left: -35%;
+    right: 0;
+    bottom: auto;
+    height: 35%;
+    width: auto;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
   }
 
-  .grid-cell.border-bottom.border-right {
-    background-image: var(--border-bg), var(--border-bg);
-    background-repeat: repeat-x, repeat-y;
-    background-size: auto 35%, 35% auto;
-    background-position: 0 100%, 100% 0;
+  .grid-cell.border-top.border-left::after {
+    /* Left border gets ::after */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -35%;
+    bottom: 0;
+    width: 35%;
+    background-image: var(--border-bg);
+    background-repeat: repeat-y;
+    background-size: 100% auto;
+    z-index: 10;
+    pointer-events: none;
   }
 
-  .grid-cell.border-bottom.border-left {
-    background-image: var(--border-bg), var(--border-bg);
-    background-repeat: repeat-x, repeat-y;
-    background-size: auto 35%, 35% auto;
-    background-position: 0 100%, 0 0;
+  /* For cells with both bottom and right borders */
+  .grid-cell.border-bottom.border-right::before {
+    /* Right border gets ::before */
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -35%;
+    bottom: 0;
+    width: 35%;
+    background-image: var(--border-bg);
+    background-repeat: repeat-y;
+    background-size: 100% auto;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .grid-cell.border-bottom.border-right::after {
+    /* Bottom border gets ::after */
+    bottom: -35%;
+    left: 0;
+    right: -35%;
+    top: auto;
+    height: 35%;
+    width: auto;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+  }
+
+  /* For cells with both top and right borders */
+  .grid-cell.border-top.border-right::before {
+    /* Top border */
+    top: -35%;
+    left: 0;
+    right: -35%;
+    bottom: auto;
+    height: 35%;
+    width: auto;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+  }
+
+  .grid-cell.border-top.border-right::after {
+    /* Right border - need to override the default */
+    top: 0;
+    right: -35%;
+    bottom: 0;
+    width: 35%;
+    background-repeat: repeat-y;
+    background-size: 100% auto;
+  }
+
+  /* For cells with both bottom and left borders */
+  .grid-cell.border-bottom.border-left::before {
+    /* Left border */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -35%;
+    bottom: 0;
+    width: 35%;
+    background-image: var(--border-bg);
+    background-repeat: repeat-y;
+    background-size: 100% auto;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .grid-cell.border-bottom.border-left::after {
+    /* Bottom border */
+    bottom: -35%;
+    left: -35%;
+    right: 0;
+    top: auto;
+    height: 35%;
+    width: auto;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
   }
 
 
