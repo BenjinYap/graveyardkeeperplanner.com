@@ -27,10 +27,40 @@
 
   import { getEffectiveDimensions } from '../models/PlacedWorkstation';
 
+  let workstationElement;
+  let tooltipElement;
+  let isHovered = false;
+
   $: effectiveDimensions = getEffectiveDimensions({ width, height, rotation });
+  
+  // Update tooltip position when ghost position changes
+  $: if (isGhost && isHovered && x !== undefined && y !== undefined) {
+    setTimeout(updateTooltipPosition, 0);
+  }
+
+  function updateTooltipPosition() {
+    if (!workstationElement || !tooltipElement || !isHovered) return;
+    
+    const rect = workstationElement.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const topY = rect.top;
+    
+    tooltipElement.style.left = `${centerX}px`;
+    tooltipElement.style.top = `${topY}px`;
+  }
+
+  function handleMouseEnter() {
+    isHovered = true;
+    setTimeout(updateTooltipPosition, 0); // Next tick to ensure DOM is updated
+  }
+
+  function handleMouseLeave() {
+    isHovered = false;
+  }
 </script>
 
 <div 
+  bind:this={workstationElement}
   class="placed-workstation"
   class:workstation-ghost={isGhost}
   class:valid={isGhost && isValid}
@@ -43,6 +73,8 @@
     width: calc({effectiveDimensions.width} * (100% / var(--grid-cols)));
     height: calc({effectiveDimensions.height} * (100% / var(--grid-rows)));
   "
+  on:mouseenter={handleMouseEnter}
+  on:mouseleave={handleMouseLeave}
 >
   <div 
     class="workstation-content"
@@ -69,6 +101,15 @@
     </div>
     <div class="workstation-name">{workstation.name}</div>
   </div>
+</div>
+
+<!-- Fixed tooltip that appears above everything -->
+<div 
+  bind:this={tooltipElement}
+  class="workstation-tooltip"
+  class:visible={isHovered}
+>
+  {workstation.name}
 </div>
 
 <style>
@@ -102,11 +143,15 @@
     transform: scale(1.05);
   }
 
-  .placed-workstation .workstation-name {
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
+  /* Hide workstation names inside workstations (use fixed tooltip instead) */
+  .workstation-name {
+    display: none;
+  }
+
+
+  /* Fixed tooltip for placed workstations */
+  .workstation-tooltip {
+    position: fixed;
     font-size: 0.8rem;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
@@ -114,25 +159,24 @@
     border-radius: 4px;
     white-space: nowrap;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    z-index: 7;
+    z-index: 1000;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s ease;
+    transform: translate(-50%, -100%);
+    margin-top: -5px;
   }
 
-  .placed-workstation:hover:not(.workstation-ghost) .workstation-name {
+  .workstation-tooltip.visible {
     opacity: 1;
   }
 
   /* Ghost-specific overrides */
   .workstation-ghost {
-    pointer-events: none;
+    pointer-events: auto; /* Allow hover events for tooltips */
     z-index: 10;
   }
 
-  .workstation-ghost .workstation-name {
-    opacity: 1; /* Always show name for ghosts */
-  }
 
   .workstation-ghost.valid {
     background-color: rgba(0, 255, 0, 0.4);
@@ -167,6 +211,6 @@
 
   .workstation-ghost .workstation-clickable-area {
     cursor: default;
-    pointer-events: none;
+    pointer-events: none; /* Keep clickable area non-interactive for ghosts */
   }
 </style>
