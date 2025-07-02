@@ -465,8 +465,6 @@
               data-y={y}
               data-area={cell.area}
             >
-              <!-- Grid cell coordinates for debugging -->
-              <span class="grid-coordinates">{x},{y}</span>
             </div>
           {/each}
         {/each}
@@ -786,15 +784,6 @@
     background-position: 0 100%, 0 0;
   }
 
-  .grid-coordinates {
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    font-size: 8px;
-    color: rgba(255, 255, 255, 0.3);
-    pointer-events: none;
-    display: none; /* Hidden by default, enable for debugging */
-  }
 
   /* Placed workstation styles */
   .placed-workstation {
