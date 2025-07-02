@@ -43,10 +43,18 @@
       <div class="no-results">No workstations found</div>
     {:else}
       {#each filteredWorkstations as workstation}
-        <button
-          class="workstation-button"
+        <div
+          class="workstation-item"
           class:active={$selectedWorkstation?.id === workstation.id}
           on:click={() => selectWorkstation(workstation)}
+          role="button"
+          tabindex="0"
+          on:keydown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              selectWorkstation(workstation);
+            }
+          }}
         >
           <img 
             src={workstation.image} 
@@ -57,7 +65,7 @@
             <div class="name">{workstation.name}</div>
             <div class="size">{workstation.width}x{workstation.height}</div>
           </div>
-        </button>
+        </div>
       {/each}
     {/if}
   </div>
@@ -105,10 +113,11 @@
     gap: 8px;
   }
 
-  .workstation-button {
+  .workstation-item {
     background: rgba(245, 245, 220, 0.9);
     border: 2px solid #654321;
     border-radius: 6px;
+    padding: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
@@ -116,21 +125,23 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
+    gap: 12px;
   }
 
-  .workstation-button:hover {
+  .workstation-item:hover {
     background: rgba(255, 255, 255, 0.95);
     border-color: #8B4513;
+    transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
-  .workstation-button.active {
+  .workstation-item.active {
     background: rgba(255, 215, 0, 0.9);
     border-color: #DAA520;
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
   }
 
-  .workstation-button.active:hover {
+  .workstation-item.active:hover {
     background: rgba(255, 215, 0, 1);
   }
 
