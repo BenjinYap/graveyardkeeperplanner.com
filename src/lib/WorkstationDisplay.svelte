@@ -81,6 +81,7 @@
     justify-content: center;
     z-index: 5;
     box-sizing: border-box;
+    background-color: transparent; /* Ensure no background by default */
   }
 
   .workstation-content {

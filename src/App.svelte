@@ -622,11 +622,6 @@
     border: 1px solid rgb(71 47 3 / 60%); /* Prominent white lines */
   }
 
-
-  .grid-cell.occupied {
-    background-color: rgba(0, 0, 0, 0.2); /* Darker overlay when occupied */
-  }
-
   /* Border cells with edge-specific borders using background-image positioning */
   .grid-cell.border-cell {
     background-image: var(--border-bg);
