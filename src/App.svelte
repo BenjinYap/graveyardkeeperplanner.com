@@ -39,6 +39,40 @@
     initializeGrid();
   }
 
+  // Function to check if a cell is on the border of its buildable area
+  function isBorderCell(x, y, cell) {
+    if (!cell.buildable || !cell.area) return false;
+    
+    const area = cell.area;
+    const rows = $gridState.length;
+    const cols = $gridState[0].length;
+    
+    // Check adjacent cells (4-directional)
+    const directions = [
+      { dx: -1, dy: 0 }, // left
+      { dx: 1, dy: 0 },  // right
+      { dx: 0, dy: -1 }, // up
+      { dx: 0, dy: 1 }   // down
+    ];
+    
+    for (const dir of directions) {
+      const newX = x + dir.dx;
+      const newY = y + dir.dy;
+      
+      // If we're at the edge of the grid, or adjacent cell is different area/non-buildable
+      if (newX < 0 || newX >= cols || newY < 0 || newY >= rows) {
+        return true;
+      }
+      
+      const adjacentCell = $gridState[newY][newX];
+      if (!adjacentCell.buildable || adjacentCell.area !== area) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
   // Initialize the grid with the grid areas data
   onMount(() => {
     initializeGrid(); // Uses grid_areas.json by default
@@ -404,6 +438,7 @@
               class="grid-cell"
               class:occupied={cell.occupied}
               class:buildable={cell.buildable}
+              class:border-cell={isBorderCell(x, y, cell)}
               class:area-a={cell.area === 'a'}
               class:area-bc={cell.area === 'bc'}
               class:area-d={cell.area === 'd'}
@@ -727,6 +762,17 @@
 
   .grid-cell.occupied {
     background-color: #7a6548; /* Slightly darker when occupied */
+  }
+
+  .grid-cell.border-cell {
+    background-image: 
+      linear-gradient(45deg, #FFD700 25%, transparent 25%), 
+      linear-gradient(-45deg, #FFD700 25%, transparent 25%), 
+      linear-gradient(45deg, transparent 75%, #FFD700 75%), 
+      linear-gradient(-45deg, transparent 75%, #FFD700 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+    background-color: #000000;
   }
 
   .grid-coordinates {
